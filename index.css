@@ -1,0 +1,15 @@
+.v-select .v-field__input {
+    justify-content: center;
+}
+.v-messages__message {
+    text-align: center;
+}
+.v-list-item-title {
+    text-align: center;
+}
+.v-field__field {
+    justify-content: center;
+}
+.v-select .v-select__selection {
+    text-align: center;
+}

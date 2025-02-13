@@ -1,0 +1,10 @@
+{
+    "htmlWhitespaceSensitivity": "ignore",
+    "printWidth": 120,
+    "tabWidth": 4,
+    "vueIndentScriptAndStyle": true,
+    "withNodeModules": false,
+    "bracketSameLine": true,
+    "semi": true,
+    "trailingComma": "all"
+}
