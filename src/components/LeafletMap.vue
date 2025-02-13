@@ -4,8 +4,17 @@
 <script setup lang="ts">
     import "leaflet/dist/leaflet.css";
     import * as L from "leaflet";
+    import markerIconUrl from "leaflet/dist/images/marker-icon.png";
+    import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+    import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
+
     import { onMounted, onUnmounted } from "vue";
     import { leafletStore } from "@/stores/LeafletStore";
+
+    L.Icon.Default.prototype.options.iconUrl = markerIconUrl;
+    L.Icon.Default.prototype.options.iconRetinaUrl = markerIconRetinaUrl;
+    L.Icon.Default.prototype.options.shadowUrl = markerShadowUrl;
+    L.Icon.Default.imagePath = "";
 
     onMounted(() => {
         leafletStore.setup();
