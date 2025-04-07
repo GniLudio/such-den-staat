@@ -1,37 +1,18 @@
-import { computed, onMounted, reactive, ref, type Ref } from "vue";
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
 
-import "leaflet/dist/leaflet.css";
-import * as L from "leaflet";
+export const useLeafletStore = defineStore("leaflet", () => {
+    const state = {
+        map: ref<L.Map>(undefined!),
+    };
+    const getters = {};
+    const actions = {
+        setMap,
+    };
 
-let map: L.Map = undefined!;
-let layerGroup: L.LayerGroup = undefined!;
+    function setMap(map: L.Map): void {
+        state.map.value = map;
+    }
 
-export const leafletStore = reactive({
-    setup(): void {
-        this.dispose();
-        map = L.map("map");
-        layerGroup = L.layerGroup().addTo(map);
-
-        // preloading marker image
-        L.marker([50, 9], { opacity: 0 }).addTo(map);
-    },
-    getMap(): L.Map {
-        return map;
-    },
-    getLayerGroup(): L.LayerGroup {
-        return layerGroup;
-    },
-    dispose(): void {
-        if (layerGroup) {
-            layerGroup.clearLayers();
-            layerGroup.off();
-            layerGroup.remove();
-            layerGroup = undefined!;
-        }
-        if (map) {
-            map.off();
-            map.remove();
-            map = undefined!;
-        }
-    },
+    return { ...state, ...getters, ...actions };
 });

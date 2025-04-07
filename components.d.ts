@@ -7,10 +7,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AutobahnSearch: typeof import('./src/components/search/AutobahnSearch.vue')['default']
+    AbfallNaviSearch: typeof import('./src/components/searchTabs/AbfallNaviSearch.vue')['default']
+    AbfallNaviSearchTab: typeof import('./src/components/searchTabs/AbfallNaviSearchTab.vue')['default']
     LeafletMap: typeof import('./src/components/LeafletMap.vue')['default']
     MultiSelect: typeof import('./src/components/MultiSelect.vue')['default']
-    SearchBar: typeof import('./src/components/SearchBar.vue')['default']
-    SearchButton: typeof import('./src/components/SearchButton.vue')['default']
+    SearchDialog: typeof import('./src/components/SearchDialog.vue')['default']
+    SettingsDialog: typeof import('./src/components/SettingsDialog.vue')['default']
   }
 }
