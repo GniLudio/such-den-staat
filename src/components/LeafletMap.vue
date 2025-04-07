@@ -9,7 +9,7 @@
     import * as L from "leaflet";
 
     import { onMounted } from "vue";
-    import { useLeafletStore } from "@/stores/leafletStore";
+    import { useLeafletStore } from "@/stores/leafletStore.js";
 
     // Options
     const mapOptions: L.MapOptions = {
