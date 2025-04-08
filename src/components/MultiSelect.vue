@@ -27,17 +27,16 @@
     import { computed, watch } from "vue";
 
     const props = defineProps({
-        label: { type: String, required: true },
-        items: { type: Array<any>, required: true },
+        label: { type: String, default: "" },
+        items: { type: Array<any>, default: new Array(0) },
         modelValue: { type: Array<any>, default: new Array(0) },
-        maxDisplayed: { type: Number, required: true },
+        maxDisplayed: { type: Number, default: 3 },
         hideToggleAll: { type: Boolean, default: false },
     });
     const model = defineModel({
         type: Array<any>,
-        required: true,
+        default: new Array(0),
     });
-    const emit = defineEmits(["update:modelValue"]);
 
     const allSelected = computed(() => props.items.length == model.value.length);
     const hint = computed(() => {

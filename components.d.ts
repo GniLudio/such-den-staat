@@ -7,7 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AbfallNaviSearchTab: typeof import('./src/components/searchTabs/AbfallNaviSearchTab.vue')['default']
+    AutobahnenTab: typeof import('./src/components/searchTabs/AutobahnenTab.vue')['default']
     LeafletMap: typeof import('./src/components/LeafletMap.vue')['default']
     MultiSelect: typeof import('./src/components/MultiSelect.vue')['default']
     SearchDialog: typeof import('./src/components/SearchDialog.vue')['default']
