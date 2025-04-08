@@ -11,4 +11,5 @@ jobs:
               with:
                   username: "GniLudio"
                   reponame: "such-den-staat"
+                  cname: suchdenstaat.de
                   token: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
