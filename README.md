@@ -1,3 +1,2 @@
 # Such den Staat
-
- > https://gniludio.github.io/such-den-staat/
+> [suchdenstaat.de](https://www.suchdenstaat.de)
