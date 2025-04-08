@@ -10,7 +10,7 @@ import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: "/such-den-staat/",
+    base: "/",
     plugins: [
         Vue({
             template: { transformAssetUrls },
