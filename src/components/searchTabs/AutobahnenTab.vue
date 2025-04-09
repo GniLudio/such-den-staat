@@ -37,7 +37,7 @@
     </v-form>
 </template>
 <script setup lang="ts">
-    import { onMounted, onUnmounted, ref } from "vue";
+    import { onMounted, onUnmounted, ref, toRaw } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";
@@ -81,7 +81,7 @@
     const loading = ref(false);
     const loadingProgress = ref(50);
 
-    let markerLayer: L.LayerGroup = L.layerGroup();
+    let markerLayer: L.LayerGroup = L.layerGroup().addTo(toRaw(useLeafletStore().mapRef) as L.Map);
 
     onMounted(() => {
         fetchRoadworks();
@@ -104,9 +104,7 @@
 
         const requests: Promise<any>[] = [];
 
-        const map = useLeafletStore().map as L.Map;
-        markerLayer.removeFrom(map);
-        markerLayer = L.layerGroup().addTo(map);
+        markerLayer.clearLayers();
 
         for (const roadwork of selectedRoads.value) {
             for (const service of selectedServices.value) {

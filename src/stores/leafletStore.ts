@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, toRaw } from "vue";
 
 export const useLeafletStore = defineStore("leaflet", () => {
     const state = {
-        map: ref<L.Map>(undefined!),
+        mapRef: ref<L.Map>(null!),
     };
     const getters = {};
     const actions = {
@@ -11,7 +11,7 @@ export const useLeafletStore = defineStore("leaflet", () => {
     };
 
     function setMap(map: L.Map): void {
-        state.map.value = map;
+        state.mapRef.value = map;
     }
 
     return { ...state, ...getters, ...actions };
