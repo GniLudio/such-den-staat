@@ -1,17 +1,27 @@
 import { defineStore } from "pinia";
 import { ref, toRaw } from "vue";
+import * as L from "leaflet";
 
 export const useLeafletStore = defineStore("leaflet", () => {
-    const state = {
-        mapRef: ref<L.Map>(null!),
+    let _map: L.Map = undefined!;
+    let _markerGroup: L.LayerGroup = undefined!;
+    const state = {};
+    const getters = {
+        getMap: () => _map as L.Map,
+        getMarkerGroup: () => _markerGroup as L.LayerGroup,
     };
-    const getters = {};
     const actions = {
         setMap,
+        clearMarkers,
     };
 
     function setMap(map: L.Map): void {
-        state.mapRef.value = map;
+        _map = map;
+        _markerGroup = L.layerGroup().addTo(map);
+    }
+    function clearMarkers(): void {
+        _markerGroup.remove();
+        _markerGroup = L.layerGroup().addTo(_map);
     }
 
     return { ...state, ...getters, ...actions };

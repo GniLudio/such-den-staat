@@ -84,12 +84,8 @@
     const loading = ref(false);
     const loadingProgress = ref(50);
 
-    let markerLayer: L.LayerGroup = L.layerGroup().addTo(toRaw(useLeafletStore().mapRef) as L.Map);
-
     onMounted(() => {
         fetchRoadworks();
-    });
-    onUnmounted(() => {
     });
 
     async function fetchRoadworks(): Promise<void> {
@@ -106,7 +102,8 @@
 
         const requests: Promise<any>[] = [];
 
-        markerLayer.clearLayers();
+        useLeafletStore().clearMarkers();
+        const markerGroup = useLeafletStore().getMarkerGroup();
 
         for (const roadwork of selectedRoads.value) {
             for (const service of selectedServices.value) {
@@ -124,7 +121,7 @@
                         const markers = elements?.map((e) => service.createMarker(e)) ?? [];
                         for (const marker of markers) {
                             if (marker) {
-                                marker.addTo(markerLayer);
+                                marker.addTo(markerGroup);
                             }
                         }
                         loadingProgress.value += 100 / requests.length;

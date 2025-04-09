@@ -7,7 +7,9 @@
         <v-container>
             <v-tabs-window v-model="tab">
                 <v-tabs-window-item value="autobahnen">
-                    <AutobahnenTab></AutobahnenTab>
+                    <keep-alive>
+                        <AutobahnenTab></AutobahnenTab>
+                    </keep-alive>
                 </v-tabs-window-item>
             </v-tabs-window>
         </v-container>
