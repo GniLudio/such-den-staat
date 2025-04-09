@@ -54,3 +54,15 @@
         model.value.sort((a, b) => props.items.indexOf(a) - props.items.indexOf(b));
     });
 </script>
+<style lang="css">
+    .multi-select .v-field__field {
+        justify-content: center;
+        text-align: center;
+    }
+    .multi-select .v-field__input {
+        justify-content: center;
+    }
+    .multi-select .v-list-item {
+        text-align: center;
+    }
+</style>
