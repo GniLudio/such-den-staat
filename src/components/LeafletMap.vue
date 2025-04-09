@@ -41,6 +41,7 @@
         initializeTileLayer(map);
         initializeAttributions(map);
         initializeControls(map);
+        preloadMarker(map);
     });
 
     async function initializeTileLayer(map: L.Map): Promise<void> {
@@ -114,6 +115,8 @@
                         L.DomEvent.stopPropagation(ev);
                         L.DomEvent.preventDefault(ev);
                         emit("on-search");
+                        icon.classList.toggle("mdi-magnify");
+                        icon.classList.toggle("mdi-magnify-remove-outline");
                     },
                     this,
                 ).on(button, "dblclick", L.DomEvent.stopPropagation);
@@ -121,6 +124,10 @@
                 return div;
             },
         }))().addTo(map);
+    }
+
+    function preloadMarker(map: L.Map): void {
+        L.marker([50, 9], { opacity: 0.01 }).addTo(map);
     }
 </script>
 <style lang="css" scoped>

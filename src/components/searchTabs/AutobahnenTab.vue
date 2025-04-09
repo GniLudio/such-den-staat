@@ -1,14 +1,16 @@
 <template>
     <v-form v-model="notValid" @submit.prevent="" @submit="onSubmit">
-        <v-row>
-            <v-col>
+        <v-row justify="center">
+            <v-col :xxl="10" :xl="10" :lg="10" :md="10" :sm="10" :xs="10">
                 <MultiSelect
                     label="Autobahnen"
                     :items="roads"
                     v-model="selectedRoads"
                     :loading="loadingRoads"
+                    :max-displayed="5"
                     :rules="roadsRules"></MultiSelect>
             </v-col>
+            <!--
             <v-col>
                 <MultiSelect
                     label="Informationen"
@@ -18,6 +20,7 @@
                     hide-toggle-all
                     :rules="serviceRules"></MultiSelect>
             </v-col>
+            -->
             <v-col cols="auto" class="d-flex">
                 <v-btn
                     color="primary"
@@ -43,7 +46,7 @@
     import { useLeafletStore } from "@/stores/leafletStore";
     import * as L from "leaflet";
 
-    type Roadwork = components["schemas"]["Roadwork"];
+    type RoadItem = components["schemas"]["RoadItem"];
 
     const baseUrl = "https://verkehr.autobahn.de/o/autobahn";
     const listUrl = `${baseUrl}/`;
@@ -56,12 +59,12 @@
         listField: string;
         createMarker: (data: any) => L.Marker | undefined;
     }[] = [
-        { url: "roadworks", label: "Baustellen", listField: "roadworks", createMarker: createRoadworkMarker },
-        //{ url: "webcam", label: "Webcams", listField: "", createMarker: (_) => undefined },
-        //{ url: "parking_lorry", label: "Parkplätze", listField: "", createMarker: (_) => undefined },
-        //{ url: "warning", label: "Verkehrsmeldungen", listField: "", createMarker: (_) => undefined },
-        //{ url: "closure", label: "Sperrungen", listField: "", createMarker: (_) => undefined },
-        //{ url: "electric_charging_station", label: "E-Ladestationen", listField: "", createMarker: (_) => undefined },
+        { url: "roadworks", label: "Baustellen", listField: "roadworks", createMarker: createRoadItemMarker },
+        // { url: "webcam", label: "Webcams", listField: "webcam", createMarker: createRoadItemMarker },
+        // { url: "parking_lorry", label: "Parkplätze", listField: "parking_lorry", createMarker: createRoadItemMarker},
+        // { url: "warning", label: "Verkehrsmeldungen", listField: "warning", createMarker: createRoadItemMarker },
+        // { url: "closure", label: "Sperrungen", listField: "closure", createMarker: createRoadItemMarker },
+        // { url: "electric_charging_station", label: "E-Ladestationen", listField: "electric_charging_station", createMarker: createRoadItemMarker},
     ];
     const roads = ref([]);
 
@@ -95,7 +98,7 @@
         const response = await fetch(listUrl);
         const data = await response.json();
         roads.value = data.roads;
-        selectedRoads.value = roads.value.slice(0, 3);
+        selectedRoads.value = roads.value.slice(0, 5);
         loadingRoads.value = false;
     }
 
@@ -114,7 +117,12 @@
                         const data = await fetch(url);
                         const json = await data.json();
                         const elements: any[] | undefined = json[service.listField];
-                        const markers = elements?.map(service.createMarker) ?? [];
+                        if (!elements) {
+                            console.warn("Wrong listfield", service, json);
+                            resolve();
+                            return;
+                        }
+                        const markers = elements?.map((e) => service.createMarker(e)) ?? [];
                         for (const marker of markers) {
                             if (marker) {
                                 marker.addTo(markerLayer);
@@ -132,18 +140,13 @@
         loadingProgress.value = 0;
     }
 
-    function createRoadworkMarker(roadwork: Roadwork): L.Marker | undefined {
-        if (typeof roadwork.identifier != "string") {
-            console.log("ERROR", "identifier", roadwork.identifier);
-        }
-        if (!roadwork.coordinate?.lat) return;
-        if (!roadwork.coordinate?.long) return;
-        const lat = roadwork.coordinate?.lat as unknown as number;
-        const long = roadwork.coordinate?.long as unknown as number;
-
+    function createRoadItemMarker(roadItem: RoadItem): L.Marker | undefined {
+        console.log("Create marker", roadItem);
+        if (!roadItem.coordinate?.lat || !roadItem.coordinate.long) return undefined;
+        const lat = roadItem.coordinate.lat as unknown as number;
+        const long = roadItem.coordinate.long as unknown as number;
         const marker = L.marker([lat, long]);
-
-        marker.bindPopup(roadwork.title ?? "Baustelle");
+        marker.bindPopup(roadItem.title ?? "Fehlender Titel");
         return marker;
     }
 </script>

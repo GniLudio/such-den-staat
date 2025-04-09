@@ -20,6 +20,6 @@
 <script setup lang="ts">
     import { ref, watch } from "vue";
 
-    const searchDialog = ref(false);
+    const searchDialog = ref(true);
     const settingsDialog = ref(false);
 </script>
