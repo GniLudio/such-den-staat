@@ -90,7 +90,6 @@
         fetchRoadworks();
     });
     onUnmounted(() => {
-        markerLayer.remove();
     });
 
     async function fetchRoadworks(): Promise<void> {
@@ -141,7 +140,6 @@
     }
 
     function createRoadItemMarker(roadItem: RoadItem): L.Marker | undefined {
-        console.log("Create marker", roadItem);
         if (!roadItem.coordinate?.lat || !roadItem.coordinate.long) return undefined;
         const lat = roadItem.coordinate.lat as unknown as number;
         const long = roadItem.coordinate.long as unknown as number;
