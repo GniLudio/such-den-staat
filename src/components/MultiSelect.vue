@@ -16,7 +16,7 @@
             </v-list-item>
         </template>
         <template v-slot:selection="{ index, item }">
-            <v-label v-if="allSelected && index == 0">Alle {{ items.length }} {{ label }}</v-label>
+            <v-label v-if="allSelected && index == 0">Alle {{ label }}</v-label>
             <v-chip v-else-if="!allSelected && index < maxDisplayed" label>
                 {{ item.title }}
             </v-chip>
