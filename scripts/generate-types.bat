@@ -1,0 +1,1 @@
+npx openapi-typescript -typescript https://raw.githubusercontent.com/bundesAPI/autobahn-api/refs/heads/main/openapi.yaml -o ./src/types/autobahn-api.d.ts

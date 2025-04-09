@@ -37,9 +37,11 @@
     </v-form>
 </template>
 <script setup lang="ts">
-    import { onMounted, ref } from "vue";
+    import { onMounted, onUnmounted, ref } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
+    import { useLeafletStore } from "@/stores/leafletStore";
+    import * as L from "leaflet";
 
     type Roadwork = components["schemas"]["Roadwork"];
 
@@ -48,13 +50,18 @@
     const serviceUrl = `${baseUrl}/{roadId}/services/{service}`;
     const detailsUrl = `${baseUrl}/details/{service}/{elementId}`;
 
-    const services: { url: string; label: string; listField: string; createMarkers: (data: any[]) => void }[] = [
-        { url: "roadworks", label: "Baustellen", listField: "roadworks", createMarkers: createRoadworkMarkers },
-        { url: "webcam", label: "Webcams", listField: "", createMarkers: (_) => {} },
-        { url: "parking_lorry", label: "Parkplätze", listField: "", createMarkers: (_) => {} },
-        { url: "warning", label: "Verkehrsmeldungen", listField: "", createMarkers: (_) => {} },
-        { url: "closure", label: "Sperrungen", listField: "", createMarkers: (_) => {} },
-        { url: "electric_charging_station", label: "E-Ladestationen", listField: "", createMarkers: (_) => {} },
+    const services: {
+        url: string;
+        label: string;
+        listField: string;
+        createMarker: (data: any) => L.Marker | undefined;
+    }[] = [
+        { url: "roadworks", label: "Baustellen", listField: "roadworks", createMarker: createRoadworkMarker },
+        //{ url: "webcam", label: "Webcams", listField: "", createMarker: (_) => undefined },
+        //{ url: "parking_lorry", label: "Parkplätze", listField: "", createMarker: (_) => undefined },
+        //{ url: "warning", label: "Verkehrsmeldungen", listField: "", createMarker: (_) => undefined },
+        //{ url: "closure", label: "Sperrungen", listField: "", createMarker: (_) => undefined },
+        //{ url: "electric_charging_station", label: "E-Ladestationen", listField: "", createMarker: (_) => undefined },
     ];
     const roads = ref([]);
 
@@ -74,8 +81,13 @@
     const loading = ref(false);
     const loadingProgress = ref(50);
 
+    let markerLayer: L.LayerGroup = L.layerGroup();
+
     onMounted(() => {
         fetchRoadworks();
+    });
+    onUnmounted(() => {
+        markerLayer.remove();
     });
 
     async function fetchRoadworks(): Promise<void> {
@@ -83,7 +95,7 @@
         const response = await fetch(listUrl);
         const data = await response.json();
         roads.value = data.roads;
-        selectedRoads.value = roads.value.slice();
+        selectedRoads.value = roads.value.slice(0, 3);
         loadingRoads.value = false;
     }
 
@@ -91,7 +103,11 @@
         loading.value = true;
 
         const requests: Promise<any>[] = [];
-        let i = 0;
+
+        const map = useLeafletStore().map as L.Map;
+        markerLayer.removeFrom(map);
+        markerLayer = L.layerGroup().addTo(map);
+
         for (const roadwork of selectedRoads.value) {
             for (const service of selectedServices.value) {
                 const url = serviceUrl.replace("{roadId}", roadwork).replace("{service}", service.url);
@@ -99,9 +115,12 @@
                     new Promise<void>(async (resolve) => {
                         const data = await fetch(url);
                         const json = await data.json();
-                        const elements = json[service.listField];
-                        if (elements.length > 0) {
-                            service.createMarkers(elements);
+                        const elements: any[] | undefined = json[service.listField];
+                        const markers = elements?.map(service.createMarker) ?? [];
+                        for (const marker of markers) {
+                            if (marker) {
+                                marker.addTo(markerLayer);
+                            }
                         }
                         loadingProgress.value += 100 / requests.length;
                         resolve();
@@ -115,12 +134,18 @@
         loadingProgress.value = 0;
     }
 
-    let first = true;
-
-    function createRoadworkMarkers(roadworks: Roadwork[]): void {
-        if (first) {
-            first = false;
-            console.log(roadworks[0]);
+    function createRoadworkMarker(roadwork: Roadwork): L.Marker | undefined {
+        if (typeof roadwork.identifier != "string") {
+            console.log("ERROR", "identifier", roadwork.identifier);
         }
+        if (!roadwork.coordinate?.lat) return;
+        if (!roadwork.coordinate?.long) return;
+        const lat = roadwork.coordinate?.lat as unknown as number;
+        const long = roadwork.coordinate?.long as unknown as number;
+
+        const marker = L.marker([lat, long]);
+
+        marker.bindPopup(roadwork.title ?? "Baustelle");
+        return marker;
     }
 </script>
