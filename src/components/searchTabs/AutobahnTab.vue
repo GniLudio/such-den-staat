@@ -37,7 +37,7 @@
     </v-form>
 </template>
 <script setup lang="ts">
-    import { onMounted, onUnmounted, ref, toRaw, watch } from "vue";
+    import { onMounted, ref } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";

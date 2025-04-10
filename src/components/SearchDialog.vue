@@ -8,7 +8,7 @@
             <v-tabs-window v-model="tab">
                 <v-tabs-window-item value="autobahnen">
                     <keep-alive>
-                        <AutobahnenTab></AutobahnenTab>
+                        <AutobahnTab></AutobahnTab>
                     </keep-alive>
                 </v-tabs-window-item>
             </v-tabs-window>
