@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { components } from "@/types/autobahn-api";
 
 export const useAutobahnStore = defineStore("autobahn", () => {
     const baseUrl = "https://verkehr.autobahn.de/o/autobahn";
@@ -9,7 +8,7 @@ export const useAutobahnStore = defineStore("autobahn", () => {
     const detailsUrl = `${baseUrl}/details/{serviceID}/{elementID}`;
     const services: Service[] = [
         { path: "roadworks", title: "Baustellen", listField: "roadworks" },
-        { path: "webcam", title: "Webcams", listField: "webcam" },
+        //{ path: "webcam", title: "Webcams", listField: "webcam" },
         { path: "parking_lorry", title: "Parkplätze", listField: "parking_lorry" },
         { path: "warning", title: "Verkehrsmeldungen", listField: "warning" },
         { path: "closure", title: "Sperrungen", listField: "closure" },
