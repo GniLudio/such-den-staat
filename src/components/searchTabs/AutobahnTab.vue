@@ -37,16 +37,18 @@
     </v-form>
 </template>
 <script setup lang="ts">
-    import { ref } from "vue";
+    import { createApp, getCurrentInstance, ref } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";
     import * as L from "leaflet";
     import { useAutobahnStore } from "@/stores/autobahnStore";
+    import RoadItemTooltip from "../tooltips/RoadItemTooltip.vue";
 
     type RoadItem = components["schemas"]["RoadItem"];
 
     const store = useAutobahnStore();
+    const { appContext } = getCurrentInstance()!;
 
     const rules = {
         notEmpty: (value: unknown[]) => value.length > 0,
@@ -109,7 +111,19 @@
         const lat = roadItem.coordinate.lat as unknown as number;
         const long = roadItem.coordinate.long as unknown as number;
         const marker = L.marker([lat, long]);
-        marker.bindPopup(`$${roadItem.title ?? "Fehlender Titel"}`);
+
+        const tooltip = document.createElement("div");
+
+        const content = createApp(RoadItemTooltip, { roadItem });
+        Object.assign(content._context, appContext);
+        content.mount(tooltip);
+
+        marker.bindPopup(tooltip);
         return marker;
     }
 </script>
+<style lang="css">
+    .leaflet-popup-content {
+        width: fit-content !important;
+    }
+</style>
