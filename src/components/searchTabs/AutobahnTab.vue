@@ -1,34 +1,33 @@
 <template>
     <v-form v-model="notValid" @submit.prevent="" @submit="onSubmit">
-        <v-row justify="center">
-            <v-col :xxl="5" :xl="5" :lg="5" :md="5" :sm="5" :xs="5">
+        <v-row justify="center" class="mx-2 mx-md-0">
+            <v-spacer></v-spacer>
+            <v-col :cols="12" :md="5">
                 <MultiSelect
                     label="Autobahnen"
                     :items="store.roads"
                     v-model="store.selectedRoads"
                     :loading="store.loading"
-                    :max-displayed="5"
+                    :max-displayed="maxDisplayedRoads"
                     :rules="roadsRules"></MultiSelect>
             </v-col>
-            <v-col :xxl="5" :xl="5" :lg="5" :md="5" :sm="5" :xs="5">
+            <v-spacer></v-spacer>
+            <v-col :cols="9" :sm="10" :md="5">
                 <MultiSelect
                     label="Informationen"
                     :items="store.services"
                     v-model="store.selectedServices"
                     hide-toggle-all
+                    :max-displayed="maxDisplayedServices"
                     :rules="serviceRules"></MultiSelect>
             </v-col>
-            <v-col cols="auto" class="d-flex">
-                <v-btn
-                    color="primary"
-                    class="align-self-center"
-                    type="submit"
-                    :disabled="!notValid"
-                    :loading="loading"
-                    block>
+            <v-spacer></v-spacer>
+            <v-col :cols="3" :sm="2" md="auto">
+                <v-btn color="primary" class="align-self-center" type="submit" :disabled="!notValid" :loading="loading">
                     <v-icon icon="mdi-magnify"></v-icon>
                 </v-btn>
             </v-col>
+            <v-spacer></v-spacer>
         </v-row>
         <v-progress-linear
             v-model="loadingProgress"
@@ -37,18 +36,20 @@
     </v-form>
 </template>
 <script setup lang="ts">
-    import { createApp, getCurrentInstance, ref } from "vue";
+    import { computed, createApp, getCurrentInstance, ref } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";
     import * as L from "leaflet";
     import { useAutobahnStore } from "@/stores/autobahnStore";
     import RoadItemTooltip from "../tooltips/RoadItemTooltip.vue";
+    import { useDisplay } from "vuetify";
 
     type RoadItem = components["schemas"]["RoadItem"];
 
     const store = useAutobahnStore();
     const { appContext } = getCurrentInstance()!;
+    const display = useDisplay();
 
     const rules = {
         notEmpty: (value: unknown[]) => value.length > 0,
@@ -57,9 +58,40 @@
     const serviceRules = [rules.notEmpty];
 
     const notValid = ref(true);
-
     const loading = ref(false);
     const loadingProgress = ref(50);
+    const maxDisplayedRoads = computed(() => {
+        switch (display.name.value) {
+            case "xs":
+                return 4;
+            case "sm":
+                return 7;
+            case "md":
+                return 4;
+            case "lg":
+                return 6;
+            case "xl":
+                return 11;
+            case "xxl":
+                return 15;
+        }
+    });
+    const maxDisplayedServices = computed(() => {
+        switch (display.name.value) {
+            case "xs":
+                return 1;
+            case "sm":
+                return 2;
+            case "md":
+                return 2;
+            case "lg":
+                return 3;
+            case "xl":
+                return 5;
+            case "xxl":
+                return 5;
+        }
+    });
 
     async function onSubmit(): Promise<void> {
         loading.value = true;

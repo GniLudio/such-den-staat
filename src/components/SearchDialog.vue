@@ -4,15 +4,11 @@
             <v-tab value="autobahnen">Autobahnen</v-tab>
         </v-tabs>
 
-        <v-container>
-            <v-tabs-window v-model="tab">
-                <v-tabs-window-item value="autobahnen">
-                    <keep-alive>
-                        <AutobahnTab></AutobahnTab>
-                    </keep-alive>
-                </v-tabs-window-item>
-            </v-tabs-window>
-        </v-container>
+        <v-tabs-window v-model="tab" class="ma-2">
+            <v-tabs-window-item value="autobahnen">
+                <AutobahnTab></AutobahnTab>
+            </v-tabs-window-item>
+        </v-tabs-window>
     </v-card>
 </template>
 <script setup lang="ts">
