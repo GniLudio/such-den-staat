@@ -2,9 +2,14 @@ import { defineStore } from "pinia";
 import * as L from "leaflet";
 
 export const useLeafletStore = defineStore("leaflet", () => {
+    const boundary = fetch(new URL("/bundeslaender_simplify0.geojson", import.meta.url).href).then((r) => r.json());
+
     let _map: L.Map = undefined!;
     let _markerGroup: L.LayerGroup = undefined!;
-    const state = {};
+
+    const state = {
+        boundary,
+    };
     const getters = {
         getMap: () => _map as L.Map,
         getMarkerGroup: () => _markerGroup as L.LayerGroup,

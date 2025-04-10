@@ -49,11 +49,8 @@
             // TODO: Simplify geojson for borders
             // TODO: Include islands
             // TODO: Add toggle to settings
-            const boundary = await (
-                await fetch(new URL("/bundeslaender_simplify0.geojson", import.meta.url).href)
-            ).json();
-            const a = new L.TileLayer.BoundaryCanvas("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                boundary: boundary,
+            new L.TileLayer.BoundaryCanvas("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                boundary: await useLeafletStore().boundary,
             }).addTo(map);
         } else {
             L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
