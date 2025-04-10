@@ -1,7 +1,7 @@
 <template>
     <v-form v-model="notValid" @submit.prevent="" @submit="onSubmit">
         <v-row justify="center">
-            <v-col :xxl="10" :xl="10" :lg="10" :md="10" :sm="10" :xs="10">
+            <v-col :xxl="5" :xl="5" :lg="5" :md="5" :sm="5" :xs="5">
                 <MultiSelect
                     label="Autobahnen"
                     :items="roads"
@@ -10,17 +10,14 @@
                     :max-displayed="5"
                     :rules="roadsRules"></MultiSelect>
             </v-col>
-            <!--
-            <v-col>
+            <v-col :xxl="5" :xl="5" :lg="5" :md="5" :sm="5" :xs="5">
                 <MultiSelect
                     label="Informationen"
                     :items="services"
                     v-model="selectedServices"
-                    item-title="label"
                     hide-toggle-all
                     :rules="serviceRules"></MultiSelect>
             </v-col>
-            -->
             <v-col cols="auto" class="d-flex">
                 <v-btn
                     color="primary"
@@ -40,7 +37,7 @@
     </v-form>
 </template>
 <script setup lang="ts">
-    import { onMounted, onUnmounted, ref, toRaw } from "vue";
+    import { onMounted, onUnmounted, ref, toRaw, watch } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";
@@ -53,22 +50,22 @@
     const serviceUrl = `${baseUrl}/{roadId}/services/{service}`;
     const detailsUrl = `${baseUrl}/details/{service}/{elementId}`;
 
-    const services: {
-        url: string;
-        label: string;
-        listField: string;
-        createMarker: (data: any) => L.Marker | undefined;
-    }[] = [
-        { url: "roadworks", label: "Baustellen", listField: "roadworks", createMarker: createRoadItemMarker },
-        // { url: "webcam", label: "Webcams", listField: "webcam", createMarker: createRoadItemMarker },
-        // { url: "parking_lorry", label: "Parkplätze", listField: "parking_lorry", createMarker: createRoadItemMarker},
-        // { url: "warning", label: "Verkehrsmeldungen", listField: "warning", createMarker: createRoadItemMarker },
-        // { url: "closure", label: "Sperrungen", listField: "closure", createMarker: createRoadItemMarker },
-        // { url: "electric_charging_station", label: "E-Ladestationen", listField: "electric_charging_station", createMarker: createRoadItemMarker},
+    const services: Service[] = [
+        { url: "roadworks", title: "Baustellen", listField: "roadworks", createMarker },
+        //{ url: "webcam", title: "Webcams", listField: "webcam", createMarker },
+        { url: "parking_lorry", title: "Parkplätze", listField: "parking_lorry", createMarker },
+        { url: "warning", title: "Verkehrsmeldungen", listField: "warning", createMarker },
+        { url: "closure", title: "Sperrungen", listField: "closure", createMarker },
+        {
+            url: "electric_charging_station",
+            title: "E-Ladestationen",
+            listField: "electric_charging_station",
+            createMarker,
+        },
     ];
     const roads = ref([]);
 
-    const selectedServices = ref(services.slice(0, 1));
+    const selectedServices = ref(services.slice(0, 1).map((s) => s.title));
     const selectedRoads = ref([] as string[]);
 
     const loadingRoads = ref(false);
@@ -93,7 +90,7 @@
         const response = await fetch(listUrl);
         const data = await response.json();
         roads.value = data.roads;
-        selectedRoads.value = roads.value.slice(0, 5);
+        selectedRoads.value = roads.value.slice(0, 1);
         loadingRoads.value = false;
     }
 
@@ -106,7 +103,13 @@
         const markerGroup = useLeafletStore().getMarkerGroup();
 
         for (const roadwork of selectedRoads.value) {
-            for (const service of selectedServices.value) {
+            for (const serviceTitle of selectedServices.value) {
+                const service = getService(serviceTitle);
+                if (!service) {
+                    console.warn("Service not found", roadwork, serviceTitle);
+                    continue;
+                }
+
                 const url = serviceUrl.replace("{roadId}", roadwork).replace("{service}", service.url);
                 requests.push(
                     new Promise<void>(async (resolve) => {
@@ -118,7 +121,7 @@
                             resolve();
                             return;
                         }
-                        const markers = elements?.map((e) => service.createMarker(e)) ?? [];
+                        const markers = elements?.map((e) => service.createMarker(e, service)) ?? [];
                         for (const marker of markers) {
                             if (marker) {
                                 marker.addTo(markerGroup);
@@ -136,12 +139,23 @@
         loadingProgress.value = 0;
     }
 
-    function createRoadItemMarker(roadItem: RoadItem): L.Marker | undefined {
+    function createMarker(roadItem: RoadItem, service: Service): L.Marker | undefined {
         if (!roadItem.coordinate?.lat || !roadItem.coordinate.long) return undefined;
         const lat = roadItem.coordinate.lat as unknown as number;
         const long = roadItem.coordinate.long as unknown as number;
         const marker = L.marker([lat, long]);
-        marker.bindPopup(roadItem.title ?? "Fehlender Titel");
+        marker.bindPopup(`$${roadItem.title ?? "Fehlender Titel"} (${service.title})`);
         return marker;
+    }
+
+    function getService(title: string): Service | undefined {
+        return services.find((s) => s.title == title);
+    }
+
+    interface Service {
+        url: string;
+        title: string;
+        listField: string;
+        createMarker: (data: any, service: Service) => L.Marker | undefined;
     }
 </script>
