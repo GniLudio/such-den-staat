@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { ref, toRaw } from "vue";
 import * as L from "leaflet";
 
 export const useLeafletStore = defineStore("leaflet", () => {
