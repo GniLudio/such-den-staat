@@ -65,4 +65,7 @@
     .multi-select .v-list-item {
         text-align: center;
     }
+    .multi-select .v-input__details {
+        text-align: center;
+    }
 </style>
