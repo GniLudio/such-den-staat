@@ -1,5 +1,5 @@
 <template>
-    <v-form v-model="notValid" @submit.prevent="" @submit="onSubmit">
+    <v-form v-model="valid" @submit.prevent="" @submit="onSubmit">
         <v-row justify="center" class="mx-2 mx-md-0">
             <v-spacer></v-spacer>
             <v-col :cols="12" :md="5">
@@ -23,7 +23,7 @@
             </v-col>
             <v-spacer></v-spacer>
             <v-col :cols="3" :sm="2" md="auto">
-                <v-btn color="primary" class="align-self-center" type="submit" :disabled="!notValid" :loading="loading">
+                <v-btn color="primary" class="align-self-center" type="submit" :disabled="!valid" :loading="loading">
                     <v-icon icon="mdi-magnify"></v-icon>
                 </v-btn>
             </v-col>
@@ -57,7 +57,7 @@
     const roadsRules = [rules.notEmpty];
     const serviceRules = [rules.notEmpty];
 
-    const notValid = ref(true);
+    const valid = ref(true);
     const loading = ref(false);
     const loadingProgress = ref(50);
     const maxDisplayedRoads = computed(() => {
