@@ -1,11 +1,8 @@
 <template>
     <v-app>
         <v-main>
-            <LeafletMap @on-search="searchDialog = !searchDialog" @on-settings="settingsDialog = !settingsDialog" />
+            <LeafletMap @on-search="searchDialog = !searchDialog" />
         </v-main>
-        <v-dialog v-model="settingsDialog" max-width="900">
-            <SettingsDialog></SettingsDialog>
-        </v-dialog>
         <v-dialog
             v-model="searchDialog"
             :contained="true"
@@ -21,5 +18,4 @@
     import { ref, watch } from "vue";
 
     const searchDialog = ref(true);
-    const settingsDialog = ref(false);
 </script>

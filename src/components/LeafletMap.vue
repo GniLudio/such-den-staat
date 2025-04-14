@@ -34,7 +34,7 @@
         drawCircle: true,
     };
 
-    const emit = defineEmits(["on-settings", "on-search"]);
+    const emit = defineEmits(["on-search"]);
     onMounted(async () => {
         const map: L.Map = L.map("map", mapOptions);
         useLeafletStore().setMap(map);
@@ -74,28 +74,6 @@
     function initializeControls(map: L.Map): void {
         L.control.zoom({ position: "topright" }).addTo(map);
         new LocateControl(locateOptions).addTo(map);
-        new (L.Control.extend({
-            onAdd: function (map: L.Map): HTMLElement {
-                const div = L.DomUtil.create("div", "leaflet-bar leaflet-control");
-
-                const button = L.DomUtil.create("a", undefined, div);
-                const icon = L.DomUtil.create("span", "mdi mdi-cog", button);
-                icon.style.fontSize = "2em";
-
-                L.DomEvent.on(
-                    button,
-                    "click",
-                    function (ev) {
-                        L.DomEvent.stopPropagation(ev);
-                        L.DomEvent.preventDefault(ev);
-                        emit("on-settings");
-                    },
-                    this,
-                ).on(button, "dblclick", L.DomEvent.stopPropagation);
-
-                return div;
-            },
-        }))().addTo(map);
 
         new (L.Control.extend({
             onAdd: function (map: L.Map): HTMLElement {
