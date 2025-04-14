@@ -138,6 +138,7 @@
         loadingProgress.value = 0;
     }
 
+    // TODO: Create box for extend
     function createMarker(roadItem: RoadItem): L.Marker | undefined {
         if (!roadItem.coordinate?.lat || !roadItem.coordinate.long) return undefined;
         const lat = roadItem.coordinate.lat as unknown as number;
