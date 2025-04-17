@@ -17,7 +17,7 @@ export const useAutobahnStore = defineStore("autobahn", () => {
 
     const state = {
         roads: ref<string[]>([]),
-        loading: ref<boolean>(false),
+        roadsLoading: ref<boolean>(false),
         selectedRoads: ref<string[]>([]),
         selectedServices: ref<string[]>(["Baustellen"]),
     };
@@ -45,12 +45,12 @@ export const useAutobahnStore = defineStore("autobahn", () => {
     }
 
     async function fetchRoadworks(): Promise<void> {
-        state.loading.value = true;
+        state.roadsLoading.value = true;
         const response = await fetch(listUrl);
         const data = await response.json();
         state.roads.value = data.roads;
         state.selectedRoads.value = data.roads.slice(0, 1);
-        state.loading.value = false;
+        state.roadsLoading.value = false;
     }
 
     return { ...state, ...getters, ...actions };

@@ -3,7 +3,7 @@
         <v-row justify="center" class="mx-2 mx-md-0">
             <v-col :cols="12" :md="5">
                 <MultiSelect label="Autobahnen" :items="store.roads" v-model="store.selectedRoads"
-                    :loading="store.loading" :rules="roadRules" show-toggle-all></MultiSelect>
+                    :loading="store.roadsLoading" :rules="roadRules" show-toggle-all></MultiSelect>
             </v-col>
             <v-col :cols="10" :md="5">
                 <MultiSelect label="Informationen" :items="store.services" v-model="store.selectedServices"
@@ -27,13 +27,11 @@
     import * as L from "leaflet";
     import { useAutobahnStore } from "@/stores/autobahnStore";
     import RoadItemTooltip from "../tooltips/RoadItemTooltip.vue";
-    import { useDisplay } from "vuetify";
 
     type RoadItem = components["schemas"]["RoadItem"];
 
     const store = useAutobahnStore();
     const { appContext } = getCurrentInstance()!;
-    const display = useDisplay();
 
     const rules = {
         notEmpty: (value: unknown[]) => value.length > 0,
