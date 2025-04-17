@@ -10,12 +10,11 @@
                     v-model="store.selectedServices" hide-toggle-all :rules="serviceRules"></MultiSelect>
             </v-col>
         </v-row>
-        <v-progress-linear v-model="loadingProgress" class="mx-1"
-            :style="{ opacity: loading ? 1 : 0 }"></v-progress-linear>
+
     </v-form>
 </template>
 <script setup lang="ts">
-    import { createApp, getCurrentInstance, ref } from "vue";
+    import { createApp, getCurrentInstance, ref, type Ref } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";
@@ -34,12 +33,14 @@
     const roadRules = [rules.notEmpty];
     const serviceRules = [rules.notEmpty];
 
-    const valid = ref(true);
-    const loading = ref(false);
-    const loadingProgress = ref(50);
+    const valid: Ref<boolean> = ref(true);
+    const loading: Ref<boolean> = ref(false);
+    const loadingProgress: Ref<number> = ref(50);
 
     defineExpose({
         search,
+        loading,
+        loadingProgress
     });
 
     async function search(): Promise<void> {
