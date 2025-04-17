@@ -8,7 +8,7 @@
         </div>
         <v-tabs-window v-model="tab" class="mb-1">
             <v-tabs-window-item :value="t.id" v-for="t in tabs">
-                <component :is="t.type" :ref="t.ref"></component>
+                <component :is="t.component" :ref="t.ref"></component>
             </v-tabs-window-item>
         </v-tabs-window>
         <v-progress-linear :model-value="loadingProgress" :class="{ 'opacity-0': !loading }"></v-progress-linear>
@@ -22,7 +22,7 @@
         {
             id: "autobahnen",
             label: "Autobahnen",
-            type: AutobahnTab,
+            component: AutobahnTab,
             ref: ref(),
         },
     ];
@@ -41,7 +41,7 @@
     interface Tab {
         id: TabID,
         label: string,
-        type: Component<TabComponent>,
+        component: Component<TabComponent>,
         ref: Ref<TabComponent | undefined>,
     }
     interface TabComponent {
