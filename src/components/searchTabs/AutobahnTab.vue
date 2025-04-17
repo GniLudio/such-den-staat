@@ -1,30 +1,26 @@
 <template>
     <v-form v-model="valid" @submit.prevent="" @submit="onSubmit">
         <v-row justify="center" class="mx-2 mx-md-0">
-            <v-spacer></v-spacer>
             <v-col :cols="12" :md="5">
                 <MultiSelect label="Autobahnen" :items="store.roads" v-model="store.selectedRoads"
-                    :loading="store.loading" :max-displayed="maxDisplayedRoads" :rules="roadsRules"></MultiSelect>
+                    :loading="store.loading" :rules="roadRules" show-toggle-all></MultiSelect>
             </v-col>
-            <v-spacer></v-spacer>
-            <v-col :cols="9" :sm="10" :md="5">
+            <v-col :cols="10" :md="5">
                 <MultiSelect label="Informationen" :items="store.services" v-model="store.selectedServices"
-                    hide-toggle-all :max-displayed="maxDisplayedServices" :rules="serviceRules"></MultiSelect>
+                    hide-toggle-all :rules="serviceRules"></MultiSelect>
             </v-col>
-            <v-spacer></v-spacer>
-            <v-col :cols="3" :sm="2" md="auto">
-                <v-btn color="primary" class="align-self-center" type="submit" :disabled="!valid" :loading="loading">
+            <v-col :cols="2" class="d-flex">
+                <v-btn color="primary" type="submit" class="ma-auto" :disabled="!valid" :loading="loading">
                     <v-icon icon="mdi-magnify"></v-icon>
                 </v-btn>
             </v-col>
-            <v-spacer></v-spacer>
         </v-row>
         <v-progress-linear v-model="loadingProgress" class="mx-1"
             :style="{ opacity: loading ? 1 : 0 }"></v-progress-linear>
     </v-form>
 </template>
 <script setup lang="ts">
-    import { computed, createApp, getCurrentInstance, ref } from "vue";
+    import { createApp, getCurrentInstance, ref } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";
@@ -42,44 +38,12 @@
     const rules = {
         notEmpty: (value: unknown[]) => value.length > 0,
     };
-    const roadsRules = [rules.notEmpty];
+    const roadRules = [rules.notEmpty];
     const serviceRules = [rules.notEmpty];
 
     const valid = ref(true);
     const loading = ref(false);
     const loadingProgress = ref(50);
-    const maxDisplayedRoads = computed(() => {
-        switch (display.name.value) {
-            case "xs":
-                return 4;
-            case "sm":
-                return 7;
-            case "md":
-                return 4;
-            case "lg":
-                return 6;
-            case "xl":
-                return 11;
-            case "xxl":
-                return 15;
-        }
-    });
-    const maxDisplayedServices = computed(() => {
-        switch (display.name.value) {
-            case "xs":
-                return 1;
-            case "sm":
-                return 2;
-            case "md":
-                return 2;
-            case "lg":
-                return 3;
-            case "xl":
-                return 5;
-            case "xxl":
-                return 5;
-        }
-    });
 
     async function onSubmit(): Promise<void> {
         loading.value = true;
