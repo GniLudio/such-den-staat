@@ -35,7 +35,7 @@
 
     const valid: Ref<boolean> = ref(true);
     const loading: Ref<boolean> = ref(false);
-    const loadingProgress: Ref<number> = ref(50);
+    const loadingProgress: Ref<number> = ref(0);
 
     defineExpose({
         search,
