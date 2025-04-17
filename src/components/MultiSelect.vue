@@ -10,7 +10,7 @@
         </template>
     </v-select>
 </template>
-<script lang="ts" setup>
+<script lang="ts" setup generic="T">
     import { computed, onMounted, ref, watch } from 'vue';
     import { VSelect } from 'vuetify/components';
 
@@ -20,7 +20,7 @@
             required: false,
         },
         items: {
-            type: Array<any>,
+            type: Array<T>,
             default: new Array(0),
         },
         showToggleAll: {
@@ -32,13 +32,13 @@
             default: false,
         }
     });
-    const model = defineModel<any[]>({
-        type: Array<any>,
+    const model = defineModel<T[]>({
+        type: Array<T>,
         default: new Array(0),
     });
 
     const hiddenCount = ref<number>(0);
-    const vselect = ref<VSelect | undefined>(undefined);
+    const vselect = ref<VSelect>();
     const allSelected = computed<boolean>(() => props.items.length == model.value.length);
     const suffix = computed<string | undefined>(() => (hiddenCount.value > 0) ? `+${hiddenCount.value}` : undefined);
 

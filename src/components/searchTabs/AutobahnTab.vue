@@ -1,18 +1,13 @@
 <template>
-    <v-form v-model="valid" @submit.prevent="" @submit="onSubmit">
-        <v-row justify="center" class="mx-2 mx-md-0">
-            <v-col :cols="12" :md="5">
+    <v-form v-model="valid" @submit.prevent="" @submit="search">
+        <v-row justify="center">
+            <v-col :cols="12" :md="6" class="pb-md-3 pb-1">
                 <MultiSelect label="Autobahnen" :items="store.roads" v-model="store.selectedRoads"
                     :loading="store.roadsLoading" :rules="roadRules" show-toggle-all></MultiSelect>
             </v-col>
-            <v-col :cols="10" :md="5">
-                <MultiSelect label="Informationen" :items="store.services" v-model="store.selectedServices"
-                    hide-toggle-all :rules="serviceRules"></MultiSelect>
-            </v-col>
-            <v-col :cols="2" class="d-flex">
-                <v-btn color="primary" type="submit" class="ma-auto" :disabled="!valid" :loading="loading">
-                    <v-icon icon="mdi-magnify"></v-icon>
-                </v-btn>
+            <v-col :cols="12" :md="6" class="pt-md-3 pt-1">
+                <MultiSelect label="Informationen" :items="store.services.map((s) => s.title)"
+                    v-model="store.selectedServices" hide-toggle-all :rules="serviceRules"></MultiSelect>
             </v-col>
         </v-row>
         <v-progress-linear v-model="loadingProgress" class="mx-1"
@@ -43,7 +38,11 @@
     const loading = ref(false);
     const loadingProgress = ref(50);
 
-    async function onSubmit(): Promise<void> {
+    defineExpose({
+        search,
+    });
+
+    async function search(): Promise<void> {
         loading.value = true;
 
         const requests: Promise<any>[] = [];
