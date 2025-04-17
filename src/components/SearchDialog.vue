@@ -15,18 +15,18 @@
     </v-card>
 </template>
 <script setup lang="ts">
-    import { computed, ref, watch, type Ref } from "vue";
+    import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
 
-    const tab = ref("ausbildungssuche");
-    const autobahnTab: Ref<TabComponent | undefined> = ref<TabComponent>();
-    const tabs: Record<string, Ref<TabComponent | undefined>> = {
+    const tab: Ref<TabID> = ref("autobahnen");
+    const autobahnTab: Ref<TabComponent | undefined> = ref();
+    const tabs: Record<TabID, Ref<TabComponent | undefined>> = {
         "autobahnen": autobahnTab,
     }
     const tabInstance: Ref<Ref<TabComponent | undefined> | undefined> = ref();
 
-    const search = computed(() => tabInstance.value?.value?.search);
-    const loading = computed(() => Object.values(tabs).map((t) => t.value?.loading).some((l) => l));
-    const loadingProgress = computed(() => Math.max(...Object.values(tabs).map((t) => t.value?.loading ? t.value.loadingProgress : 0)));
+    const search: ComputedRef<Function | undefined> = computed(() => tabInstance.value?.value?.search);
+    const loading: ComputedRef<boolean> = computed(() => Object.values(tabs).map((t) => t.value?.loading).some((l) => l));
+    const loadingProgress: ComputedRef<number> = computed(() => Math.max(...Object.values(tabs).map((t) => t.value?.loading ? t.value.loadingProgress : 0)));
 
     watch(tab, (newValue) => {
         tabInstance.value = tabs[newValue];
@@ -37,4 +37,5 @@
         loading: boolean,
         loadingProgress: number,
     }
+    type TabID = "autobahnen";
 </script>
