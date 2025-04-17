@@ -8,10 +8,14 @@
                 </template>
             </v-list-item>
         </template>
+        <template v-slot:chip="{ item, index }">
+            <v-label v-if="allSelected && index == 0">Alle {{ label }}</v-label>
+            <v-chip v-else-if="!allSelected">{{ item.title }}</v-chip>
+        </template>
     </v-select>
 </template>
 <script lang="ts" setup generic="T">
-    import { computed, onMounted, ref, watch } from 'vue';
+    import { computed, onMounted, ref, watch, type ComputedRef, type Ref } from 'vue';
     import { VSelect } from 'vuetify/components';
 
     const props = defineProps({
@@ -37,10 +41,10 @@
         default: new Array(0),
     });
 
-    const hiddenCount = ref<number>(0);
-    const vselect = ref<VSelect>();
-    const allSelected = computed<boolean>(() => props.items.length == model.value.length);
-    const suffix = computed<string | undefined>(() => (hiddenCount.value > 0) ? `+${hiddenCount.value}` : undefined);
+    const hiddenCount: Ref<number> = ref(0);
+    const vselect: Ref<VSelect | undefined> = ref();
+    const allSelected: ComputedRef<boolean> = computed(() => props.items.length == model.value.length);
+    const suffix: Ref<string | undefined> = computed(() => (!allSelected.value && hiddenCount.value > 0) ? `+${hiddenCount.value}` : undefined);
 
     watch(model, (newValue, oldValue) => {
         if (newValue == oldValue) return;
@@ -56,6 +60,7 @@
 
     function updateVisibility(): void {
         if (!vselect.value) return;
+        if (allSelected.value) return;
 
         const element: HTMLElement = vselect.value.$el;
         const children: HTMLElement[] = Array.from(element.querySelectorAll<HTMLElement>(".v-select__selection"));
@@ -63,8 +68,8 @@
         children.forEach((child) => child.style.display = "unset");
         hiddenCount.value = children.length;
 
-        const tops = children.map((child) => child.getBoundingClientRect().top);
-        const top = Math.min(...tops);
+        const tops: number[] = children.map((child) => child.getBoundingClientRect().top);
+        const top: number = Math.min(...tops);
 
         for (let i = 0; i < children.length; i++) {
             if (tops[i] > top) {

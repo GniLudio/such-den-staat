@@ -15,7 +15,7 @@
     </v-card>
 </template>
 <script setup lang="ts">
-    import { computed, ref, watch, type Component, type ComputedRef, type Ref } from "vue";
+    import { computed, ref, type Component, type ComputedRef, type Ref } from "vue";
     import AutobahnTab from "./searchTabs/AutobahnTab.vue";
 
     const tabs: Tab[] = [
