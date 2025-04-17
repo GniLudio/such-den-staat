@@ -1,12 +1,5 @@
 <template>
-    <v-select
-        :label="label"
-        :items="items"
-        v-model="model"
-        :hint="hint"
-        multiple
-        persistent-hint
-        class="multi-select"
+    <v-select :label="label" :items="items" v-model="model" :hint="hint" multiple persistent-hint class="multi-select"
         :menu-props="{ contentClass: 'multi-select' }">
         <template v-slot:prepend-item v-if="!hideToggleAll">
             <v-list-item :title="`Alle ${label}`" @click="toggleAllSelected" class="mb-2">
@@ -59,12 +52,15 @@
         justify-content: center;
         text-align: center;
     }
+
     .multi-select .v-field__input {
         justify-content: center;
     }
+
     .multi-select .v-list-item {
         text-align: center;
     }
+
     .multi-select .v-input__details {
         text-align: center;
     }

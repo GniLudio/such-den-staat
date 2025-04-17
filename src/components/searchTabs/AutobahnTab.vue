@@ -3,23 +3,13 @@
         <v-row justify="center" class="mx-2 mx-md-0">
             <v-spacer></v-spacer>
             <v-col :cols="12" :md="5">
-                <MultiSelect
-                    label="Autobahnen"
-                    :items="store.roads"
-                    v-model="store.selectedRoads"
-                    :loading="store.loading"
-                    :max-displayed="maxDisplayedRoads"
-                    :rules="roadsRules"></MultiSelect>
+                <MultiSelect label="Autobahnen" :items="store.roads" v-model="store.selectedRoads"
+                    :loading="store.loading" :max-displayed="maxDisplayedRoads" :rules="roadsRules"></MultiSelect>
             </v-col>
             <v-spacer></v-spacer>
             <v-col :cols="9" :sm="10" :md="5">
-                <MultiSelect
-                    label="Informationen"
-                    :items="store.services"
-                    v-model="store.selectedServices"
-                    hide-toggle-all
-                    :max-displayed="maxDisplayedServices"
-                    :rules="serviceRules"></MultiSelect>
+                <MultiSelect label="Informationen" :items="store.services" v-model="store.selectedServices"
+                    hide-toggle-all :max-displayed="maxDisplayedServices" :rules="serviceRules"></MultiSelect>
             </v-col>
             <v-spacer></v-spacer>
             <v-col :cols="3" :sm="2" md="auto">
@@ -29,9 +19,7 @@
             </v-col>
             <v-spacer></v-spacer>
         </v-row>
-        <v-progress-linear
-            v-model="loadingProgress"
-            class="mx-1"
+        <v-progress-linear v-model="loadingProgress" class="mx-1"
             :style="{ opacity: loading ? 1 : 0 }"></v-progress-linear>
     </v-form>
 </template>
