@@ -19,7 +19,7 @@ export const useAutobahnStore = defineStore("autobahn", () => {
         roads: ref<string[]>([]),
         roadsLoading: ref<boolean>(false),
         selectedRoads: ref<string[]>([]),
-        selectedServices: ref<string[]>(["Baustellen"]),
+        selectedServices: ref<string[]>([services[0].title]),
     };
     const getters = {
         listUrl,
