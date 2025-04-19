@@ -1,6 +1,6 @@
 <template>
-    <v-select :label="label" :items="items" v-model="model" multiple chips hide-details class="multi-select"
-        :suffix="suffix" ref="vselect" :menu-props="{ contentClass: 'multi-select' }">
+    <v-select :label="label" :items="items" v-model="model" multiple chips hide-details :suffix="suffix" ref="vselect"
+        class="select-centered" :menu-props="{ contentClass: 'select-centered' }">
         <template v-slot:prepend-item v-if="showToggleAll">
             <v-list-item :title="`Alle ${label}`" @click="toggleAllSelected" class="mb-2">
                 <template v-slot:prepend>
@@ -80,25 +80,8 @@
         }
     }
 </script>
-<style lang="css">
-    .multi-select .v-field__field {
-        justify-content: center;
-        text-align: center;
-    }
-
-    .multi-select .v-field__input {
-        justify-content: center;
-    }
-
-    .multi-select .v-list-item {
-        text-align: center;
-    }
-
-    .multi-select .v-input__details {
-        text-align: center;
-    }
-
-    .multi-select .v-text-field__suffix {
+<style lang="css" scoped>
+    .v-text-field__suffix {
         padding: 0;
     }
 </style>
