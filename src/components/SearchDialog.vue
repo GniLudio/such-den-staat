@@ -4,7 +4,7 @@
             <v-tabs v-model="tab" align-tabs="center" class="w-100 mb-2" center-active>
                 <v-tab :value="t.id" v-for="t in tabs">{{ t.label }}</v-tab>
             </v-tabs>
-            <SearchButton class="my-auto" v-on:search="search" :loading="loading" />
+            <SearchButton class="my-auto" @search="search" :loading="loading" />
         </div>
         <v-tabs-window v-model="tab" class="mb-1">
             <v-tabs-window-item :value="t.id" v-for="t in tabs">
@@ -35,7 +35,10 @@
 
     const tab: Ref<TabID> = ref(tabs[0].id);
 
-    const search = computed(() => refs[tab.value]?.search);
+    const search = computed(() => () => {
+        const search = refs[tab.value]?.search;
+        if (search) search();
+    });
     const loading = computed(() => Object.values(refs).map((r) => r.loading).some((l) => l));
     const loadingProgress = computed(() => Math.max(...Object.values(refs).map((r) => r.loading ? r.loadingProgress : 0)));
 
