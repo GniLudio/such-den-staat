@@ -1,5 +1,6 @@
+import { useFetch } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 export const useAutobahnStore = defineStore("autobahn", () => {
     const baseUrl = "https://verkehr.autobahn.de/o/autobahn";
@@ -16,8 +17,7 @@ export const useAutobahnStore = defineStore("autobahn", () => {
     ];
 
     const state = {
-        roads: ref<string[]>([]),
-        roadsLoading: ref<boolean>(false),
+        roads: useFetch<string>(listUrl).get().json<{ roads: any[] }>(),
         selectedRoads: ref<string[]>([]),
         selectedServices: ref<string[]>([services[0].title]),
     };
@@ -28,11 +28,11 @@ export const useAutobahnStore = defineStore("autobahn", () => {
         getServiceUrl,
         getDetailsUrl,
     };
-    const actions = {
-        fetchRoadworks,
-    };
+    const actions = {};
 
-    fetchRoadworks();
+    state.roads.onFetchResponse(() => {
+        state.selectedRoads.value = state.roads.data.value?.roads.slice(0, 1) ?? [];
+    });
 
     function getService(title: string): Service | undefined {
         return services.find((s) => s.title == title);
@@ -42,15 +42,6 @@ export const useAutobahnStore = defineStore("autobahn", () => {
     }
     function getDetailsUrl(serviceID: string, elementID: string): string {
         return detailsUrl.replace("{serviceID}", serviceID).replace("{elementID}", elementID);
-    }
-
-    async function fetchRoadworks(): Promise<void> {
-        state.roadsLoading.value = true;
-        const response = await fetch(listUrl);
-        const data = await response.json();
-        state.roads.value = data.roads;
-        state.selectedRoads.value = data.roads.slice(0, 1);
-        state.roadsLoading.value = false;
     }
 
     return { ...state, ...getters, ...actions };

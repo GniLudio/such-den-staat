@@ -2,8 +2,8 @@
     <v-form v-model="valid" @submit.prevent="" @submit="search">
         <v-row justify="center">
             <v-col :cols="12" :md="6" class="pb-md-3 pb-1">
-                <MultiSelect label="Autobahnen" :items="store.roads" v-model="store.selectedRoads"
-                    :loading="store.roadsLoading" :rules="roadRules" show-toggle-all></MultiSelect>
+                <MultiSelect label="Autobahnen" :items="store.roads.data?.roads" v-model="store.selectedRoads"
+                    :loading="store.roads.isFetching" :rules="roadRules" show-toggle-all></MultiSelect>
             </v-col>
             <v-col :cols="12" :md="6" class="pt-md-3 pt-1">
                 <MultiSelect label="Informationen" :items="store.services.map((s) => s.title)"
@@ -14,7 +14,7 @@
     </v-form>
 </template>
 <script setup lang="ts">
-    import { createApp, getCurrentInstance, ref, type Ref } from "vue";
+    import { computed, createApp, getCurrentInstance, ref, type ComputedRef, type Ref } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";
@@ -33,17 +33,19 @@
     const roadRules = [rules.notEmpty];
     const serviceRules = [rules.notEmpty];
 
-    const valid: Ref<boolean> = ref(true);
+    const valid: Ref<boolean> = ref(false);
     const loading: Ref<boolean> = ref(false);
     const loadingProgress: Ref<number> = ref(0);
 
     defineExpose({
         search,
         loading,
+        valid,
         loadingProgress
     });
 
     async function search(): Promise<void> {
+        if (!valid.value) return;
         loading.value = true;
 
         const requests: Promise<any>[] = [];
