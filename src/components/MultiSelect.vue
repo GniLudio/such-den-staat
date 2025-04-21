@@ -51,7 +51,7 @@
         if (!props.sortSelected) return;
         model.value.sort((a, b) => props.items.indexOf(a) - props.items.indexOf(b));
     });
-    watch(model, () => requestAnimationFrame(updateVisibility));
+    watch(model, updateVisibility, { flush: 'post', immediate: true });
     onMounted(() => new ResizeObserver(updateVisibility).observe(vselect.value?.$el));
 
     function toggleAllSelected(): void {
