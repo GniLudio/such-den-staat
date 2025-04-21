@@ -14,6 +14,7 @@
     "@mdi/font": "^7.4.47",
     "@types/leaflet": "^1.9.16",
     "@types/leaflet-boundary-canvas": "^1.0.3",
+    "@vueuse/core": "^13.1.0",
     "leaflet": "^1.9.4",
     "leaflet-boundary-canvas": "^1.0.0",
     "leaflet.locatecontrol": "^0.84.1",
