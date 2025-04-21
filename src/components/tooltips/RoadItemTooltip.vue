@@ -1,57 +1,26 @@
 <template>
-    <v-card variant="plain">
-        <v-card-title class="text-center">{{ roadItem.title }}</v-card-title>
-        <v-card-subtitle class="text-center">{{ roadItem.subtitle }}</v-card-subtitle>
-        <v-divider class="mt-3"></v-divider>
-        <div v-if="!moreInformation">
-            <v-card-text>
-                {{ hasDescription ? roadItem.description?.join("\n") : "Beschreibung fehlt" }}
-            </v-card-text>
-            <div v-if="hasFooter">
-                <v-divider class="mb-3"></v-divider>
-                <v-card-text>
-                    {{ props.roadItem.footer?.join("\n") }}
-                </v-card-text>
-            </div>
-        </div>
-        <!--
-        <v-card-text v-else>
-            <v-row v-if="roadItem.identifier">
-                <v-col cols="auto">Identifier</v-col>
-                <v-col class="text-truncate">{{ roadItem.identifier }}</v-col>
-            </v-row>
-            <v-row v-if="roadItem.icon">
-                <v-col cols="auto">Icon</v-col>
-                <v-col class="text-truncate">{{ roadItem.icon }}</v-col>
-            </v-row>
-            <v-row v-if="roadItem.isBlocked">
-                <v-col cols="auto">Blockiert</v-col>
-                <v-col class="text-truncate">{{ roadItem.isBlocked ? "Ja" : "Nein" }}</v-col>
-            </v-row>
-            <v-row v-if="roadItem.display_type">
-                <v-col cols="auto">Display-Type</v-col>
-                <v-col class="text-truncate">{{ roadItem.display_type }}</v-col>
-            </v-row>
-            <v-row v-if="roadItem.future">
-                <v-col cols="auto">Display-Type</v-col>
-                <v-col class="text-truncate">{{ roadItem.future }}</v-col>
-            </v-row>
+    <v-card variant="plain" :style="{ maxWidth: `${width}px` }">
+        <v-card-item class="justify-center">
+            <v-card-title>{{ roadItem.title ?? "Fehlender Titel" }}</v-card-title>
+            <v-card-subtitle>{{ roadItem.subtitle ?? "Fehlender Untertitel" }}</v-card-subtitle>
+        </v-card-item>
+        <v-divider :thickness="3"></v-divider>
+        <v-card-text v-if="description.length > 0" style="width: max-content; max-width: 100%;">
+            <template v-for="line in description">
+                {{ line }}
+                <br />
+            </template>
         </v-card-text>
-        <v-divider class="mb-3"></v-divider>
-        <v-card-actions class="justify-center">
-            <v-btn
-                variant="outlined"
-                :text="'Details ' + (!moreInformation ? 'anzeigen' : 'ausblenden')"
-                @click="moreInformation = !moreInformation"></v-btn>
-        </v-card-actions>
-        -->
     </v-card>
 </template>
 <script setup lang="ts">
     import type { components } from "@/types/autobahn-api";
-    import { computed, ref, type PropType } from "vue";
+    import { computed, type PropType } from "vue";
+    import { useDisplay } from "vuetify";
 
     type RoadItem = components["schemas"]["RoadItem"];
+
+    const { width } = useDisplay();
 
     const props = defineProps({
         roadItem: {
@@ -60,12 +29,19 @@
         },
     });
 
-    const moreInformation = ref(false);
-    const hasDescription = computed(() => props.roadItem.description && props.roadItem.description.length > 0);
-    const hasFooter = computed(() => props.roadItem.footer && props.roadItem.footer.length > 0);
+    const description = computed(() => props.roadItem.description ?? []);
 </script>
 <style lang="css" scoped>
-    .v-card-text {
+    .v-card {
+        text-align: center;
+    }
+
+    .v-card-item {
         white-space: pre-line;
+    }
+
+    :deep(.v-card-title),
+    :deep(.v-card-subtitle) {
+        text-wrap: wrap;
     }
 </style>
