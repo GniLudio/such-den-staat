@@ -31,11 +31,11 @@
         //    component: AbfallNaviTab,
         //},
     ];
-    const refs: Partial<Record<TabID, TabComponent>> = {};
+    const refs: Ref<Partial<Record<TabID, TabComponent>>> = ref({});
 
     const tab: Ref<TabID> = ref(tabs[0].id);
 
-    const search = computed(() => () => (refs[tab.value]?.search ?? (() => { }))());
+    const search = computed(() => refs.value[tab.value]?.search);
     const loading = computed(() => Object.values(refs).map((r) => r.loading).some((l) => l));
     const loadingProgress = computed(() => Math.max(...Object.values(refs).map((r) => r.loading ? r.loadingProgress : 0)));
 
