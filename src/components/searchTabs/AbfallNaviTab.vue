@@ -53,13 +53,11 @@
     });
 
     async function updatePlaces(): Promise<void> {
-        console.log("updatePlaces");
         places.value = [];
         if (region.value) {
             loadingPlaces.value = true;
             const url = `https://${region.value}-abfallapp.regioit.de/abfall-app-${region.value}/rest`;
             const data = await (await fetch(url)).json()
-            console.log(data);
 
             await new Promise((r) => setTimeout(r, 3000));
             loadingPlaces.value = false;

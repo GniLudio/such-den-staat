@@ -35,10 +35,7 @@
 
     const tab: Ref<TabID> = ref(tabs[0].id);
 
-    const search = computed(() => () => {
-        const search = refs[tab.value]?.search;
-        if (search) search();
-    });
+    const search = computed(() => () => (refs[tab.value]?.search ?? (() => { }))());
     const loading = computed(() => Object.values(refs).map((r) => r.loading).some((l) => l));
     const loadingProgress = computed(() => Math.max(...Object.values(refs).map((r) => r.loading ? r.loadingProgress : 0)));
 
