@@ -17,7 +17,7 @@ export const useAutobahnStore = defineStore("autobahn", () => {
     ];
 
     const state = {
-        roads: useFetch<string>(listUrl).get().json<{ roads: any[] }>(),
+        roads: useFetch(listUrl).get().json<{ roads: any[] }>(),
         selectedRoads: ref<string[]>([]),
         selectedServices: ref<string[]>([services[0].title]),
     };

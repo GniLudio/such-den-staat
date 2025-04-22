@@ -1,8 +1,11 @@
 import { defineStore } from "pinia";
 import * as L from "leaflet";
+import { useFetch } from "@vueuse/core";
 
 export const useLeafletStore = defineStore("leaflet", () => {
-    const boundary = fetch(new URL("/bundeslaender_simplify0.geojson", import.meta.url).href).then((r) => r.json());
+    const boundary = useFetch(new URL("/bundeslaender_simplify0.geojson", import.meta.url).href)
+        .get()
+        .json();
 
     let _map: L.Map = undefined!;
     let _markerGroup: L.LayerGroup = undefined!;
