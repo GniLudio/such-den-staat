@@ -1,5 +1,5 @@
 <template>
-    <v-card variant="plain" :style="{ maxWidth: `${width}px` }">
+    <v-card variant="plain" :style="{ maxWidth: `${0.9 * width}px` }">
         <v-card-item class="justify-center">
             <v-card-title>{{ roadItem.title ?? "Fehlender Titel" }}</v-card-title>
             <v-card-subtitle>{{ roadItem.subtitle ?? "Fehlender Untertitel" }}</v-card-subtitle>
