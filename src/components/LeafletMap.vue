@@ -49,7 +49,6 @@
             // TODO: Simplify geojson for borders
             // TODO: Include islands
             // TODO: Add toggle to settings
-            console.log((await useLeafletStore().boundary).data.value);
             new L.TileLayer.BoundaryCanvas("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 boundary: (await useLeafletStore().boundary).data.value
             }).addTo(map);
