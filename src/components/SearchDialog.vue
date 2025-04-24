@@ -8,7 +8,9 @@
         </div>
         <v-tabs-window v-model="tab" class="mb-1">
             <v-tabs-window-item :value="t.id" v-for="t in tabs">
-                <component :is="t.component" :ref="(ref: TabComponent) => refs[t.id] = ref" />
+                <v-form v-model="valids[t.id]">
+                    <component :is="t.component" :ref="(ref: TabComponent) => refs[t.id] = ref" />
+                </v-form>
             </v-tabs-window-item>
         </v-tabs-window>
         <v-progress-linear :model-value="loadingProgress" :class="{ 'opacity-0': !loading }"></v-progress-linear>
@@ -26,17 +28,18 @@
             label: "Autobahnen",
             component: AutobahnTab,
         },
-        //{
-        //    id: "abfallNavi",
-        //    label: "AbfallNavi",
-        //    component: AbfallNaviTab,
-        //},
+        {
+            id: "abfallNaviTab",
+            label: "AbfallNavi",
+            component: AbfallNaviTab,
+        },
     ];
     const refs: Ref<Partial<Record<TabID, TabComponent>>> = ref({});
+    const valids: Ref<Partial<Record<TabID, boolean>>> = ref({});
     const currentTab: ComputedRef<TabComponent | undefined> = computed(() => refs.value[tab.value]);
 
     const tab: Ref<TabID> = ref(tabs[0].id);
-    const searchDisabled: ComputedRef<boolean> = computed(() => currentTab.value?.search == undefined || currentTab.value.valid == false)
+    const searchDisabled: ComputedRef<boolean> = computed(() => currentTab.value?.search == undefined || !valids.value[tab.value])
 
     const abortController: Ref<AbortController | undefined> = ref();
     const loading: ComputedRef<boolean> = computed(() => abortController.value != undefined);
@@ -45,7 +48,6 @@
     watch(tab, abort);
 
     async function search(): Promise<void> {
-        console.log("search");
         if (!currentTab.value?.search) return;
 
         useLeafletStore().clearMarkers();
@@ -75,7 +77,6 @@
     }
     interface TabComponent {
         search?(signal: AbortSignal): Promise<void>[];
-        valid?: boolean,
     }
     type TabID = "autobahnenTab" | "abfallNaviTab";
 </script>

@@ -1,16 +1,14 @@
 <template>
-    <v-form v-model="valid" @submit.prevent="">
-        <v-row justify="center">
-            <v-col :cols="12" :md="6" class="pb-md-3 pb-1">
-                <MultiSelect label="Autobahnen" :items="store.roads.data?.roads" v-model="store.selectedRoads"
-                    :loading="store.roads.isFetching" :rules="roadRules" show-toggle-all></MultiSelect>
-            </v-col>
-            <v-col :cols="12" :md="6" class="pt-md-3 pt-1">
-                <MultiSelect label="Informationen" :items="store.services.map((s) => s.title)"
-                    v-model="store.selectedServices" hide-toggle-all :rules="serviceRules"></MultiSelect>
-            </v-col>
-        </v-row>
-    </v-form>
+    <v-row justify="center">
+        <v-col :cols="12" :md="6" class="pb-md-3 pb-1">
+            <MultiSelect label="Autobahnen" :items="store.roads.data?.roads" v-model="store.selectedRoads"
+                :loading="store.roads.isFetching" :rules="roadRules" show-toggle-all></MultiSelect>
+        </v-col>
+        <v-col :cols="12" :md="6" class="pt-md-3 pt-1">
+            <MultiSelect label="Informationen" :items="store.services.map((s) => s.title)"
+                v-model="store.selectedServices" hide-toggle-all :rules="serviceRules"></MultiSelect>
+        </v-col>
+    </v-row>
 </template>
 <script setup lang="ts">
     import { createApp, getCurrentInstance, ref, type Ref } from "vue";
@@ -40,8 +38,6 @@
     });
 
     function search(signal: AbortSignal): Promise<void>[] {
-        if (!valid.value) return [];
-
         const promises: Promise<void>[] = [];
         const markerGroup = useLeafletStore().getMarkerGroup();
 
