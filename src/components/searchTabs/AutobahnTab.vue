@@ -1,5 +1,5 @@
 <template>
-    <v-form v-model="valid" @submit.prevent="" @submit="search">
+    <v-form v-model="valid" @submit.prevent="">
         <v-row justify="center">
             <v-col :cols="12" :md="6" class="pb-md-3 pb-1">
                 <MultiSelect label="Autobahnen" :items="store.roads.data?.roads" v-model="store.selectedRoads"
@@ -10,11 +10,10 @@
                     v-model="store.selectedServices" hide-toggle-all :rules="serviceRules"></MultiSelect>
             </v-col>
         </v-row>
-
     </v-form>
 </template>
 <script setup lang="ts">
-    import { computed, createApp, getCurrentInstance, ref, type ComputedRef, type Ref } from "vue";
+    import { createApp, getCurrentInstance, ref, type Ref } from "vue";
     import MultiSelect from "../MultiSelect.vue";
     import type { components } from "@/types/autobahn-api";
     import { useLeafletStore } from "@/stores/leafletStore";
@@ -34,23 +33,16 @@
     const serviceRules = [rules.notEmpty];
 
     const valid: Ref<boolean> = ref(false);
-    const loading: Ref<boolean> = ref(false);
-    const loadingProgress: Ref<number> = ref(0);
 
     defineExpose({
         search,
-        loading,
         valid,
-        loadingProgress
     });
 
-    async function search(): Promise<void> {
-        if (!valid.value) return;
-        loading.value = true;
+    function search(signal: AbortSignal): Promise<void>[] {
+        if (!valid.value) return [];
 
-        const requests: Promise<any>[] = [];
-
-        useLeafletStore().clearMarkers();
+        const promises: Promise<void>[] = [];
         const markerGroup = useLeafletStore().getMarkerGroup();
 
         for (const roadwork of store.selectedRoads) {
@@ -62,35 +54,23 @@
                 }
 
                 const url = store.getServiceUrl(roadwork, service.path);
-                requests.push(
-                    new Promise<void>(async (resolve) => {
-                        const data = await fetch(url);
-                        const json = await data.json();
+                promises.push(
+                    fetch(url, { signal }).then((data) => data.json()).then((json) => {
                         const elements: any[] | undefined = json[service.listField];
                         if (!elements) {
                             console.warn("Wrong listfield", service, json);
-                            resolve();
                             return;
+                        } else {
+                            const markers = elements?.map((e) => createMarker(e)) ?? [];
+                            markers.forEach((m) => m?.addTo(markerGroup));
                         }
-                        const markers = elements?.map((e) => createMarker(e)) ?? [];
-                        for (const marker of markers) {
-                            if (marker) {
-                                marker.addTo(markerGroup);
-                            }
-                        }
-                        loadingProgress.value += 100 / requests.length;
-                        resolve();
-                    }),
+                    })
                 );
             }
         }
-
-        await Promise.all(requests);
-        loading.value = false;
-        loadingProgress.value = 0;
+        return promises;
     }
 
-    // TODO: Create box for extend
     function createMarker(roadItem: RoadItem): L.Marker | undefined {
         if (!roadItem.coordinate?.lat || !roadItem.coordinate.long) return undefined;
         const lat = roadItem.coordinate.lat as unknown as number;
