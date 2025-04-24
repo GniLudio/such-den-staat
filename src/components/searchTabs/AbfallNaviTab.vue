@@ -1,81 +1,162 @@
 <template>
     <v-row>
-        <v-col v-for="s in selects">
-            <v-select :label="s.label" :items="s.items.value" :item-title="s.itemTitle" :item-value="s.itemValue"
-                v-bind:model-value="s.vModel" :lodaing="s.loading" />
+        <v-col>
+            <v-select label="Region" :items="regions" item-value="id" item-title="name" v-model="region" hide-details />
+        </v-col>
+        <v-col>
+            <v-select label="Ort" :items="places.data.value ?? []" item-value="id" item-title="name" v-model="place"
+                hide-details :loading="places.isFetching.value" />
+        </v-col>
+        <v-col>
+            <v-select label="Straße" :items="streets.data.value ?? []" item-value="id" item-title="name"
+                v-model="street" hide-details :loading="streets.isFetching.value" />
+        </v-col>
+        <v-col>
+            <v-select label="Hausnummer" :items="streetNumbers.data.value ?? []" item-title="nr" item-value="id"
+                v-model="streetNumber" hide-details :loading="streetNumbers.isFetching.value" />
         </v-col>
     </v-row>
 </template>
 <script setup lang="ts">
-    import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
+    import { useFetch, type UseFetchReturn } from "@vueuse/core";
+    import { computed, ref, watch, type ComputedRef, type Ref, type ShallowRef } from "vue";
 
-    const loading: Ref<boolean> = ref(false);
-    const loadingProgress: Ref<number> = ref(0);
+    const baseUrl: ComputedRef<string | undefined> = computed(
+        () => region.value ? `https://${region.value}-abfallapp.regioit.de/abfall-app-${region.value}/rest` : undefined
+    )
 
     const regions: Ref<Region[]> = ref([
-        { url: "aachen", name: "Aachen" },
-        { url: "zew2", name: "AWA Entsorgungs GmbH" },
-        { url: "aw-gl2", name: "Bergisch Gladbach" },
-        { url: "bav", name: "Bergischer Abfallwirtschaftverbund" },
-        { url: "din", name: "Dinslaken" },
-        { url: "dorsten", name: "Dorsten" },
-        { url: "gt2", name: "Gütersloh" },
-        { url: "hlv", name: "Halver" },
-        { url: "coe", name: "Kreis Coesfeld" },
-        { url: "krhs", name: "Kreis Heinsberg" },
-        { url: "pi", name: "Kreis Pinneberg" },
-        { url: "krwaf", name: "Kreis Warendorf" },
-        { url: "lindlar", name: "Lindlar" },
-        { url: "stl", name: "Lüdenscheid" },
-        { url: "nds", name: "Norderstedt" },
-        { url: "nuernberg", name: "Nürnberg" },
-        { url: "roe", name: "Roetgen" },
-        { url: "solingen", name: "Solingen" },
-        { url: "wml2", name: "EGW Westmünsterland" },
+        { id: "aachen", name: "Aachen" },
+        { id: "zew2", name: "AWA Entsorgungs GmbH" },
+        { id: "aw-bgl2", name: "Bergisch Gladbach" },
+        { id: "bav", name: "Bergischer Abfallwirtschaftverbund" },
+        { id: "din", name: "Dinslaken" },
+        { id: "dorsten", name: "Dorsten" },
+        { id: "gt2", name: "Gütersloh" },
+        { id: "hlv", name: "Halver" },
+        { id: "coe", name: "Kreis Coesfeld" },
+        { id: "krhs", name: "Kreis Heinsberg" },
+        { id: "pi", name: "Kreis Pinneberg" },
+        { id: "krwaf", name: "Kreis Warendorf" },
+        { id: "lindlar", name: "Lindlar" },
+        { id: "stl", name: "Lüdenscheid" },
+        { id: "nds", name: "Norderstedt" },
+        { id: "nuernberg", name: "Nürnberg" },
+        { id: "roe", name: "Roetgen" },
+        { id: "solingen", name: "Solingen" },
+        { id: "wml2", name: "EGW Westmünsterland" },
     ]);
-    const places: Ref<Place[]> = ref([]);
+    const region: Ref<RegionID | undefined> = ref();
 
-    const region: Ref<RegionID | undefined> = ref("wml2");
+    const placesUrl: ComputedRef<string> = computed(() => baseUrl.value ? `${baseUrl.value}/orte` : '');
     const place: Ref<PlaceID | undefined> = ref();
+    const places: UseFetchReturn<Place[]> = useFetchHelper(placesUrl, place, 'id');
 
-    const loadingPlaces = ref(false);
+    const streetsUrl: ComputedRef<string> = computed(() => baseUrl.value && place.value ? `${baseUrl.value}/orte/${place.value}/strassen` : '');
+    const street: Ref<StreetID | undefined> = ref();
+    const streets: UseFetchReturn<Street[]> = useFetchHelper(streetsUrl, street, 'id', true);
 
-    watch(region, () => updatePlaces);
-
-    const selects: ComputedRef<Select[]> = computed(() => [
-        { label: "Region", itemTitle: "name", itemValue: "url", items: regions, vModel: region },
-        { label: "Ort", itemTitle: "", itemValue: "", items: places, vModel: place, loading: loadingPlaces },
-    ]);
+    const streetInstance: ComputedRef<Street | undefined> = computed(() => streets.data.value?.find((s) => s.id == street.value));
+    const streetNumbersUrl: ComputedRef<string> = computed(() => baseUrl.value && street.value ? `${baseUrl.value}/strassen/${street.value}` : '');
+    const streetNumber: Ref<StreetID | undefined> = ref();
+    const streetNumbers: UseFetchReturn<Street[]> = useFetch(streetNumbersUrl, {
+        initialData: [],
+        refetch: true,
+        beforeFetch: (ctx) => {
+            streetNumbers.data.value = [];
+            streetNumber.value = undefined;
+            if (ctx.url == '') ctx.cancel();
+            else if (streetInstance.value?.hausNrList && streetInstance.value.hausNrList.length > 0) {
+                streetNumbers.data.value = streetInstance.value.hausNrList;
+                streetNumber.value = streetNumbers.data.value[0].id;
+                ctx.cancel();
+            }
+            return ctx;
+        },
+        afterFetch: (ctx) => {
+            ctx.data = (ctx.data as Street).hausNrList ?? []
+            if (ctx.data.length > 0) {
+                streetNumber.value = ctx.data[0].id;
+            }
+            return ctx;
+        }
+    }).get().json();
 
     defineExpose({
-        loading,
-        loadingProgress,
+        search: undefined,
     });
 
-    async function updatePlaces(): Promise<void> {
-        places.value = [];
-        if (region.value) {
-            loadingPlaces.value = true;
-            const url = `https://${region.value}-abfallapp.regioit.de/abfall-app-${region.value}/rest`;
-            const data = await (await fetch(url)).json()
-
-            await new Promise((r) => setTimeout(r, 3000));
-            loadingPlaces.value = false;
-        }
-    }
-
-    interface Select {
-        label: string,
-        itemTitle: string,
-        itemValue: string,
-        items: Ref<any[]>,
-        vModel: Ref<any | undefined>,
-        loading?: Ref<boolean>,
+    function search(): Promise<void>[] {
+        return [];
     }
 
     type RegionID = string;
-    interface Region { url: RegionID, name: string }
-    type PlaceID = any;
-    type Place = any;
+    interface Region { id: RegionID, name: string }
+    type PlaceID = number;
+    interface Place { id: PlaceID; name: string; }
+    type StreetID = number;
+    interface Street {
+        id: StreetID,
+        name: string,
+        staticId: string,
+        hausNrList?: Street[],
+        plz: null,
+        gueltigBis: null,
+        ortsteilName: string,
+        ort: Place
+    }
+    type StreetNumberID = number;
+    interface StreetNumber {
+        id: StreetNumberID,
+        nr: string,
+        plz: string,
+        staticId: string,
+        gueltigBis: null
+    }
 
+
+    function useFetchHelper<ID, Item>(url: Ref<string>, item: Ref<ID | undefined>, idField: keyof Item | string, log?: boolean) {
+        const items: UseFetchReturn<Item[]> & PromiseLike<UseFetchReturn<Item[]>> = useFetch(url, {
+            initialData: [],
+            refetch: true,
+            beforeFetch: (ctx) => {
+                items.data.value = [];
+                item.value = undefined;
+                if (ctx.url == '') ctx.cancel();
+            },
+            afterFetch: (ctx) => {
+                console.log(log);
+                if (log) {
+                    console.log(ctx.data[0]);
+                }
+                if (ctx.data.length > 0) {
+                    item.value = ctx.data[0][idField] as ID;
+                }
+                return ctx;
+            }
+        }).get().json();
+        return items;
+    }
+
+</script>
+<script lang="ts">
+    namespace Temp {
+        type OrtID = number;
+        interface Ort {
+            id: OrtID;
+            name: string;
+        }
+
+        type StreetID = number;
+        interface Street {
+            id: StreetID;
+            name: string;
+            staticId: string;
+            hausNrList: any[];
+            plz: string;
+            gueltigBis: null;
+            ort: Ort;
+            ortsteilName: string;
+        }
+    }
 </script>
