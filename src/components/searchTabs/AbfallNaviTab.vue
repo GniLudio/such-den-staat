@@ -1,19 +1,22 @@
 <template>
     <v-row>
         <v-col>
-            <v-select label="Region" :items="regions" item-value="id" item-title="name" v-model="region" hide-details />
+            <v-select label="Region" :items="regions" v-model="region" :loading="false" :rules="[rules.notUndefined]"
+                item-value="id" item-title="name" hide-details />
         </v-col>
         <v-col>
-            <v-select label="Ort" :items="places.data.value ?? []" item-value="id" item-title="name" v-model="place"
-                hide-details :loading="places.isFetching.value" />
+            <v-select label="Ort" :items="places.data.value ?? []" v-model="place" :loading="places.isFetching.value"
+                :rules="[rules.notUndefined]" item-value="id" item-title="name" hide-details />
         </v-col>
         <v-col>
-            <v-select label="Straße" :items="streets.data.value ?? []" item-value="id" item-title="name"
-                v-model="street" hide-details :loading="streets.isFetching.value" />
+            <v-select label="Straße" :items="streets.data.value ?? []" v-model="street"
+                :loading="streets.isFetching.value" :rules="[rules.notUndefined]" item-value="id" item-title="name"
+                hide-details />
         </v-col>
         <v-col>
-            <v-select label="Hausnummer" :items="streetNumbers.data.value ?? []" item-title="nr" item-value="id"
-                v-model="streetNumber" hide-details :loading="streetNumbers.isFetching.value" />
+            <v-select label="Hausnummer" :items="streetNumbers.data.value ?? []" v-model="streetNumber"
+                :loading="streetNumbers.isFetching.value" :rules="[rules.notUndefined]" item-title="nr" item-value="id"
+                hide-details />
         </v-col>
     </v-row>
 </template>
@@ -54,10 +57,11 @@
 
     const streetsUrl: ComputedRef<string> = computed(() => baseUrl.value && place.value ? `${baseUrl.value}/orte/${place.value}/strassen` : '');
     const street: Ref<StreetID | undefined> = ref();
-    const streets: UseFetchReturn<Street[]> = useFetchHelper(streetsUrl, street, 'id', true);
+    const streets: UseFetchReturn<Street[]> = useFetchHelper(streetsUrl, street, 'id');
 
-    const streetInstance: ComputedRef<Street | undefined> = computed(() => streets.data.value?.find((s) => s.id == street.value));
-    const streetNumbersUrl: ComputedRef<string> = computed(() => baseUrl.value && street.value ? `${baseUrl.value}/strassen/${street.value}` : '');
+    const streetNumbersUrl: ComputedRef<string> = computed(
+        () => baseUrl.value && street.value ? `${baseUrl.value}/strassen/${street.value}` : ''
+    );
     const streetNumber: Ref<StreetID | undefined> = ref();
     const streetNumbers: UseFetchReturn<Street[]> = useFetch(streetNumbersUrl, {
         initialData: [],
@@ -65,22 +69,27 @@
         beforeFetch: (ctx) => {
             streetNumbers.data.value = [];
             streetNumber.value = undefined;
+
+            const streetInstance: Street | undefined = streets.data.value?.find((s) => s.id == street.value);
             if (ctx.url == '') ctx.cancel();
-            else if (streetInstance.value?.hausNrList && streetInstance.value.hausNrList.length > 0) {
-                streetNumbers.data.value = streetInstance.value.hausNrList;
+            else if (streetInstance?.hausNrList && streetInstance.hausNrList.length > 0) {
+                streetNumbers.data.value = streetInstance.hausNrList;
                 streetNumber.value = streetNumbers.data.value[0].id;
                 ctx.cancel();
             }
-            return ctx;
         },
         afterFetch: (ctx) => {
             ctx.data = (ctx.data as Street).hausNrList ?? []
             if (ctx.data.length > 0) {
-                streetNumber.value = ctx.data[0].id;
+                streetNumber.value ??= ctx.data[0].id;
             }
             return ctx;
         }
     }).get().json();
+
+    const rules = {
+        notUndefined: (a?: any) => a != undefined,
+    }
 
     defineExpose({
         search: undefined,
@@ -115,7 +124,7 @@
     }
 
 
-    function useFetchHelper<ID, Item>(url: Ref<string>, item: Ref<ID | undefined>, idField: keyof Item | string, log?: boolean) {
+    function useFetchHelper<ID, Item>(url: Ref<string>, item: Ref<ID | undefined>, idField: keyof Item | string) {
         const items: UseFetchReturn<Item[]> & PromiseLike<UseFetchReturn<Item[]>> = useFetch(url, {
             initialData: [],
             refetch: true,
@@ -125,10 +134,6 @@
                 if (ctx.url == '') ctx.cancel();
             },
             afterFetch: (ctx) => {
-                console.log(log);
-                if (log) {
-                    console.log(ctx.data[0]);
-                }
                 if (ctx.data.length > 0) {
                     item.value = ctx.data[0][idField] as ID;
                 }
@@ -152,11 +157,20 @@
             id: StreetID;
             name: string;
             staticId: string;
-            hausNrList: any[];
+            hausNrList: HausNummer[];
             plz: string;
             gueltigBis: null;
             ort: Ort;
             ortsteilName: string;
         }
+        type HausNummerID = any;
+        interface HausNummer {
+            id: number,
+            nr: string,
+            plz: string,
+            staticId: string,
+            gueltigBis: null
+        }
+
     }
 </script>
