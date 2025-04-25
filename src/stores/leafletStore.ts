@@ -1,6 +1,6 @@
-import { defineStore } from "pinia";
-import * as L from "leaflet";
 import { useFetch } from "@vueuse/core";
+import L from "leaflet";
+import { defineStore } from "pinia";
 
 export const useLeafletStore = defineStore("leaflet", () => {
     const boundary = useFetch(new URL("/bundeslaender_simplify0.geojson", import.meta.url).href)
