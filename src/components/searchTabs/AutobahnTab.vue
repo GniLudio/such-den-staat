@@ -2,22 +2,22 @@
     <v-row justify="center">
         <v-col :cols="12" :md="6" class="pb-md-3 pb-1">
             <MultiSelect label="Autobahnen" :items="store.roads.data?.roads" v-model="store.selectedRoads"
-                :loading="store.roads.isFetching" :rules="roadRules" show-toggle-all></MultiSelect>
+                :loading="store.roads.isFetching" :rules="[rules.notEmpty]" show-toggle-all></MultiSelect>
         </v-col>
         <v-col :cols="12" :md="6" class="pt-md-3 pt-1">
             <MultiSelect label="Informationen" :items="store.services.map((s) => s.title)"
-                v-model="store.selectedServices" hide-toggle-all :rules="serviceRules"></MultiSelect>
+                v-model="store.selectedServices" hide-toggle-all :rules="[rules.notEmpty]"></MultiSelect>
         </v-col>
     </v-row>
 </template>
 <script setup lang="ts">
-    import { createApp, getCurrentInstance, ref, type Ref } from "vue";
-    import MultiSelect from "../MultiSelect.vue";
-    import type { components } from "@/types/autobahn-api";
-    import { useLeafletStore } from "@/stores/leafletStore";
-    import * as L from "leaflet";
-    import { useAutobahnStore } from "@/stores/autobahnStore";
-    import RoadItemTooltip from "../tooltips/RoadItemTooltip.vue";
+    import { useAutobahnStore } from '@/stores/autobahnStore';
+    import { useLeafletStore } from '@/stores/leafletStore';
+    import type { components } from '@/types/autobahn-api';
+    import L from 'leaflet';
+    import { createApp, getCurrentInstance } from 'vue';
+    import RoadItemTooltip from '../tooltips/RoadItemTooltip.vue';
+
 
     type RoadItem = components["schemas"]["RoadItem"];
 
@@ -27,14 +27,9 @@
     const rules = {
         notEmpty: (value: unknown[]) => value.length > 0,
     };
-    const roadRules = [rules.notEmpty];
-    const serviceRules = [rules.notEmpty];
-
-    const valid: Ref<boolean> = ref(false);
 
     defineExpose({
         search,
-        valid,
     });
 
     function search(signal: AbortSignal): Promise<void>[] {
