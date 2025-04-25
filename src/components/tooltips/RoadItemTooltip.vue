@@ -14,9 +14,9 @@
     </v-card>
 </template>
 <script setup lang="ts">
-    import type { components } from "@/types/autobahn-api";
-    import { computed, type PropType } from "vue";
-    import { useDisplay } from "vuetify";
+    import type { components } from '@/types/autobahn-api';
+    import { type PropType, computed } from 'vue';
+    import { useDisplay } from 'vuetify';
 
     type RoadItem = components["schemas"]["RoadItem"];
 
