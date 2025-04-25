@@ -17,10 +17,11 @@
     </v-card>
 </template>
 <script setup lang="ts">
-    import { computed, ref, watch, type Component, type ComputedRef, type Ref } from "vue";
-    import AutobahnTab from "./searchTabs/AutobahnTab.vue";
-    import AbfallNaviTab from "./searchTabs/AbfallNaviTab.vue";
-    import { useLeafletStore } from "@/stores/leafletStore";
+    import { useLeafletStore } from '@/stores/leafletStore';
+    import { type Ref, ref, type ComputedRef, computed, watch, type Component } from 'vue';
+    import AbfallNaviTab from './searchTabs/AbfallNaviTab.vue';
+    import AutobahnTab from './searchTabs/AutobahnTab.vue';
+
 
     const tabs: Tab[] = [
         {
