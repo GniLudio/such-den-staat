@@ -1,7 +1,6 @@
 import { useFetch, type UseFetchReturn } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
-
+import { computed, type Ref, ref, type ComputedRef } from "vue";
 
 export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     // Fields
