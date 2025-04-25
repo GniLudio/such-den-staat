@@ -24,8 +24,9 @@
     </v-row>
 </template>
 <script setup lang="ts">
-    import { useAbfallNaviStore } from "@/stores/abfallNaviStore";
-    import { onMounted } from "vue";
+    import { useAbfallNaviStore } from '@/stores/abfallNaviStore';
+    import { onMounted } from 'vue';
+
     const store = useAbfallNaviStore();
 
     const rules = {
