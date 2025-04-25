@@ -2,7 +2,10 @@
     <div id="map"></div>
 </template>
 <script setup lang="ts">
-    import { LocateControl, type LocateOptions } from "leaflet.locatecontrol";
+    import { useLeafletStore } from '@/stores/leafletStore';
+    import { LocateControl, type LocateOptions } from 'leaflet.locatecontrol';
+    import { onMounted } from 'vue';
+
     import "leaflet.locatecontrol/dist/L.Control.Locate.min.css";
     import "leaflet/dist/leaflet.css";
     import "leaflet-boundary-canvas";
@@ -10,9 +13,6 @@
     import markerIconUrl from "leaflet/dist/images/marker-icon.png";
     import markerIconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
     import markerShadowUrl from "leaflet/dist/images/marker-shadow.png";
-
-    import { onMounted } from "vue";
-    import { useLeafletStore } from "@/stores/leafletStore";
 
     L.Icon.Default.prototype.options.iconUrl = markerIconUrl;
     L.Icon.Default.prototype.options.iconRetinaUrl = markerIconRetinaUrl;
