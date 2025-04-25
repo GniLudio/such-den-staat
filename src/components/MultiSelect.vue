@@ -15,8 +15,8 @@
     </v-select>
 </template>
 <script lang="ts" setup generic="T">
-    import { computed, onMounted, ref, watch, type ComputedRef, type Ref } from 'vue';
-    import { VSelect } from 'vuetify/components';
+    import { type Ref, ref, type ComputedRef, computed, watch, onMounted } from 'vue';
+    import type { VSelect } from 'vuetify/components';
 
     const props = defineProps({
         label: {
