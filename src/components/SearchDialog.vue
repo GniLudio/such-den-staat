@@ -38,7 +38,7 @@
     const valids: Ref<Partial<Record<TabID, boolean>>> = ref({});
     const currentTab: ComputedRef<TabComponent | undefined> = computed(() => refs.value[tab.value]);
 
-    const tab: Ref<TabID> = ref(tabs[tabs.length - 1].id);
+    const tab: Ref<TabID> = ref(tabs[0].id);
     const searchDisabled: ComputedRef<boolean> = computed(() => currentTab.value?.search == undefined || !valids.value[tab.value])
 
     const abortController: Ref<AbortController | undefined> = ref();
