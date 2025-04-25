@@ -1,6 +1,6 @@
 import { useFetch } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 
 export const useAutobahnStore = defineStore("autobahn", () => {
     const baseUrl = "https://verkehr.autobahn.de/o/autobahn";
