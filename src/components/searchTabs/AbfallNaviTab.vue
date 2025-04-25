@@ -2,16 +2,17 @@
     <v-row>
         <v-col>
             <v-select label="Region" :items="regions" v-model="region" :loading="false" :rules="[rules.notUndefined]"
-                item-value="id" item-title="name" hide-details />
+                :item-value="'id' satisfies keyof Region" :item-title="'name' satisfies keyof Region" hide-details />
         </v-col>
         <v-col>
             <v-select label="Ort" :items="places.data.value ?? []" v-model="place" :loading="places.isFetching.value"
-                :rules="[rules.notUndefined]" item-value="id" item-title="name" hide-details />
+                :rules="[rules.notUndefined]" :item-value="'id' satisfies keyof Place"
+                :item-title="'name' satisfies keyof Place" hide-details />
         </v-col>
         <v-col>
             <v-select label="Straße" :items="streets.data.value ?? []" v-model="street"
-                :loading="streets.isFetching.value" :rules="[rules.notUndefined]" item-value="id" item-title="name"
-                hide-details />
+                :loading="streets.isFetching.value" :rules="[rules.notUndefined]"
+                :item-value="'id' satisfies keyof Street" :item-title="'name' satisfies keyof Street" hide-details />
         </v-col>
         <v-col>
             <v-select label="Hausnummer" :items="streetNumbers.data.value ?? []" v-model="streetNumber"
@@ -22,7 +23,7 @@
 </template>
 <script setup lang="ts">
     import { useFetch, type UseFetchReturn } from "@vueuse/core";
-    import { computed, ref, watch, type ComputedRef, type Ref, type ShallowRef } from "vue";
+    import { computed, ref, type ComputedRef, type Ref } from "vue";
 
     const baseUrl: ComputedRef<string | undefined> = computed(
         () => region.value ? `https://${region.value}-abfallapp.regioit.de/abfall-app-${region.value}/rest` : undefined
@@ -71,7 +72,9 @@
             streetNumber.value = undefined;
 
             const streetInstance: Street | undefined = streets.data.value?.find((s) => s.id == street.value);
-            if (ctx.url == '') ctx.cancel();
+            if (ctx.url == '') {
+                ctx.cancel();
+            }
             else if (streetInstance?.hausNrList && streetInstance.hausNrList.length > 0) {
                 streetNumbers.data.value = streetInstance.hausNrList;
                 streetNumber.value = streetNumbers.data.value[0].id;
@@ -107,20 +110,12 @@
     interface Street {
         id: StreetID,
         name: string,
-        staticId: string,
         hausNrList?: Street[],
-        plz: null,
-        gueltigBis: null,
-        ortsteilName: string,
-        ort: Place
     }
     type StreetNumberID = number;
     interface StreetNumber {
         id: StreetNumberID,
         nr: string,
-        plz: string,
-        staticId: string,
-        gueltigBis: null
     }
 
 
@@ -143,34 +138,4 @@
         return items;
     }
 
-</script>
-<script lang="ts">
-    namespace Temp {
-        type OrtID = number;
-        interface Ort {
-            id: OrtID;
-            name: string;
-        }
-
-        type StreetID = number;
-        interface Street {
-            id: StreetID;
-            name: string;
-            staticId: string;
-            hausNrList: HausNummer[];
-            plz: string;
-            gueltigBis: null;
-            ort: Ort;
-            ortsteilName: string;
-        }
-        type HausNummerID = any;
-        interface HausNummer {
-            id: number,
-            nr: string,
-            plz: string,
-            staticId: string,
-            gueltigBis: null
-        }
-
-    }
 </script>
