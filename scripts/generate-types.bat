@@ -1,1 +1,1 @@
-npx openapi-typescript -typescript https://raw.githubusercontent.com/bundesAPI/autobahn-api/refs/heads/main/openapi.yaml -o ./src/types/autobahn-api.d.ts
+npx openapi-typescript -typescript https://raw.githubusercontent.com/GniLudio/autobahn-api/refs/heads/main/openapi.yaml -o ./src/types/autobahn-api.d.ts --properties-required-by-default

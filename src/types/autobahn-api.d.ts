@@ -11,11 +11,27 @@ export type paths = {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Liste verfügbarer Autobahnen
-         * @description Gibt eine Liste der verfügbaren Autobahnen zurück.
-         */
-        get: operations["list-autobahnen"];
+        /** API Version */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/html": string;
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -24,7 +40,371 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/{roadId}/services/roadworks": {
+    "/datenschutz": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Datenschutz */
+                            TITLE: string;
+                            /** @example <section> <h2>Informationen zur Datenverarbeitung durch die Autobahn GmbH des Bundes bei der Nutzung der Autobahn Service App</h2>... */
+                            CONTENT: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/impressum": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @example Impressum */
+                            TITLE: string;
+                            /** @example <div class="content-block"><h3>Herausgeber</h3><p>Die Autobahn GmbH des Bundes<br>... */
+                            CONTENT: string;
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            categories: components["schemas"]["Category"][];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autobahn": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Liste der Autobahnen */
+        get: {
+            parameters: {
+                query?: {
+                    offset?: components["parameters"]["Offset"];
+                    limit?: components["parameters"]["Limit"];
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            roads: components["schemas"]["RoadID"][];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/parking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Anzahl der freien und gesamten Parkplätze pro Stellplatz */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ParkingLot"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/services/{service}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Anzahl der Einträge pro Autobahn */
+        get: {
+            parameters: {
+                query?: {
+                    offset?: components["parameters"]["Offset"];
+                    limit?: components["parameters"]["Limit"];
+                };
+                header?: never;
+                path: {
+                    service: components["parameters"]["Service"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RoadCounter"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autobahn/{roadID}/services/warning": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Verkehrsmeldungen */
+        get: {
+            parameters: {
+                query?: {
+                    offset?: components["parameters"]["Offset"];
+                    limit?: components["parameters"]["Limit"];
+                };
+                header?: never;
+                path: {
+                    roadID: components["parameters"]["RoadID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            warning: components["schemas"]["Warning"][];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autobahn/{roadID}/services/closure": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sperrungen */
+        get: {
+            parameters: {
+                query?: {
+                    offset?: components["parameters"]["Offset"];
+                    limit?: components["parameters"]["Limit"];
+                };
+                header?: never;
+                path: {
+                    roadID: components["parameters"]["RoadID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            closure: components["schemas"]["Closure"][];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autobahn/{roadID}/services/roadworks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Baustellen */
+        get: {
+            parameters: {
+                query?: {
+                    offset?: components["parameters"]["Offset"];
+                    limit?: components["parameters"]["Limit"];
+                };
+                header?: never;
+                path: {
+                    roadID: components["parameters"]["RoadID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            roadwork: components["schemas"]["Roadwork"][];
+                        };
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autobahn/{roadID}/services/webcam": {
         parameters: {
             query?: never;
             header?: never;
@@ -32,10 +412,37 @@ export type paths = {
             cookie?: never;
         };
         /**
-         * Liste aktueller Baustellen
-         * @description Gibt eine Liste der aktuellen Baustellen zu einer Autobahn zurück.
+         * Webcams
+         * @deprecated
+         * @description Deaktiviert aufgrund der aktuellen Entwicklungen in Europa.
          */
-        get: operations["list-roadworks"];
+        get: {
+            parameters: {
+                query?: {
+                    offset?: components["parameters"]["Offset"];
+                    limit?: components["parameters"]["Limit"];
+                };
+                header?: never;
+                path: {
+                    roadID: components["parameters"]["RoadID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            webcam: components["schemas"]["Webcam"][];
+                        };
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -44,18 +451,41 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/details/roadworks/{roadworkId}": {
+    "/autobahn/{roadID}/services/parking_lorry": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Details einer Baustelle
-         * @description Gibt Details zu einer konkreten Baustelle zurück.
-         */
-        get: operations["get-roadwork"];
+        /** Rastanlagen */
+        get: {
+            parameters: {
+                query?: {
+                    offset?: components["parameters"]["Offset"];
+                    limit?: components["parameters"]["Limit"];
+                };
+                header?: never;
+                path: {
+                    roadID: components["parameters"]["RoadID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            parking_lorry: components["schemas"]["ParkingLorry"][];
+                        };
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -64,18 +494,41 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/{roadId}/services/webcam": {
+    "/autobahn/{roadID}/services/electric_charging_station": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Liste verfügbarer Webcams
-         * @description Gibt eine Liste der Webcams zu einer Autobahn zurück.
-         */
-        get: operations["list-webcams"];
+        /** E-Ladestationen */
+        get: {
+            parameters: {
+                query?: {
+                    offset?: components["parameters"]["Offset"];
+                    limit?: components["parameters"]["Limit"];
+                };
+                header?: never;
+                path: {
+                    roadID: components["parameters"]["RoadID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            parking_lorry: components["schemas"]["ElectricChargingStation"][];
+                        };
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -84,7 +537,121 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/details/webcam/{webcamId}": {
+    "/autobahn/details/warning/{warningID}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Details einer Verkehrswarnung */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    warningID: components["schemas"]["WarningID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Warning"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autobahn/details/closure/{closureID}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Details einer Sperrung */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    closureID: components["schemas"]["ClosureID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Closure"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autobahn/details/roadworks/{roadworkID}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Details einer Baustelle */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    roadworkID: components["schemas"]["RoadworkID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Roadwork"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/autobahn/details/webcam/{webcamID}": {
         parameters: {
             query?: never;
             header?: never;
@@ -93,9 +660,31 @@ export type paths = {
         };
         /**
          * Details einer Webcam
-         * @description Gibt Details einer konkreten Webcam zurück.
+         * @deprecated
+         * @description Deaktiviert aufgrund der aktuellen Entwicklungen in Europa.
          */
-        get: operations["get-webcam"];
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    webcamID: components["schemas"]["WebcamID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Webcam"];
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -104,18 +693,36 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/{roadId}/services/parking_lorry": {
+    "/autobahn/details/parking_lorry/{parkingLorryID}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Liste verfügbarer Rastplätze
-         * @description Gibt eine Liste der Rastplätze zu einer Autobahn zurück.
-         */
-        get: operations["list-parking-lorries"];
+        /** Details einer Rastanlage */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    parkingLorryID: components["schemas"]["ParkingLorryID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ParkingLorry"];
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -124,18 +731,36 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/details/parking_lorry/{lorryId}": {
+    "/autobahn/details/electric_charging_station/{electricChargingStationID}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Details eines Rastplatzes
-         * @description Gibt Details eines konkreten Rastplatzes zurück.
-         */
-        get: operations["get-parking-lorry"];
+        /** Details einer E-Ladestation */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    electricChargingStationID: components["schemas"]["ElectricChargingStationID"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ElectricChargingStation"];
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -144,18 +769,37 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/{roadId}/services/warning": {
+    "/photon/api": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Liste aktueller Verkehrsmeldungen
-         * @description Gibt eine Liste der Verkehrsmeldungen zu einer Autobahn zurück.
-         */
-        get: operations["list-warnings"];
+        /** Suche nach einem Ort */
+        get: {
+            parameters: {
+                query: {
+                    /** @example Berlin */
+                    q: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GeoJSONFeatureCollection"];
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -164,18 +808,38 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/details/warning/{warningId}": {
+    "/route/car": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Details zu einer Verkehrsmeldung
-         * @description Gibt Details zu einer konkreten Verkehrsmeldung zurück.
-         */
-        get: operations["get-warning"];
+        /** Suche nach einer Route */
+        get: {
+            parameters: {
+                query: {
+                    /** @example 13.40419,52.50289 */
+                    start: string;
+                    /** @example 10.02766,53.56734 */
+                    target: string;
+                    detailed?: boolean;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -184,7 +848,7 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/{roadId}/services/closure": {
+    "/autobahnOsInformationen": {
         parameters: {
             query?: never;
             header?: never;
@@ -192,10 +856,30 @@ export type paths = {
             cookie?: never;
         };
         /**
-         * Liste aktueller Sperrungen
-         * @description Gibt eine Liste der Sperrungen zu einer Autobahn zurück.
+         * Alle Einträge
+         * @deprecated
+         * @description Deprecated auf Grund von Performance
          */
-        get: operations["list-closures"];
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RoadItem"][];
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -204,18 +888,41 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/details/closure/{closureId}": {
+    "/autobahnOsInformationen/tile/{longitude}/{latitude}/{zoom}.mvt": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Details zu einer Sperrung
-         * @description Gibt Details zu einer konkreten Sperrung zurück.
-         */
-        get: operations["get-closure"];
+        /** Karten-Kachel */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @example 16 */
+                    longitude: components["parameters"]["Longitude"];
+                    /** @example 11 */
+                    latitude: components["parameters"]["Latitude"];
+                    /** @example 5 */
+                    zoom: components["parameters"]["Zoom"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/vnd.mapbox-vector-tile": string;
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -224,18 +931,33 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/{roadId}/services/electric_charging_station": {
+    "/../tiles/styles/verkehr/{filename}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Liste aktueller Ladestationen
-         * @description Gibt eine Liste der Ladestationen zu einer Autobahn zurück.
-         */
-        get: operations["list-charging-stations"];
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    filename: "style.json" | "sprite@2x.json" | "sprite@2x.png";
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -244,18 +966,184 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/details/electric_charging_station/{stationId}": {
+    "/../tiles/data/{filename}.json": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Details zu einer Ladestation
-         * @description Gibt Details zu einer konkreten Ladestation zurück.
-         */
-        get: operations["get-charging-station"];
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    filename: "v3" | "europe" | "lcl_junction";
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/../tiles/data/{filename}/{zoom}/{longitude}/{latitude}.pbf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    filename: "v3" | "europe" | "lcl_junction";
+                    /** @example 16 */
+                    longitude: components["parameters"]["Longitude"];
+                    /** @example 11 */
+                    latitude: components["parameters"]["Latitude"];
+                    /** @example 5 */
+                    zoom: components["parameters"]["Zoom"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/../web/main/karte/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Funktioniert via Swagger UI nicht. */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/html": string;
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/../web/main/karte/img": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Funktioniert via Swagger UI nicht. */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/html": string;
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/../web/main/karte/img/{filename}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Funktioniert via Swagger UI nicht. */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    filename: components["schemas"]["ImageFilename"];
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/html": string;
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -268,836 +1156,177 @@ export type paths = {
 export type webhooks = Record<string, never>;
 export type components = {
     schemas: {
-        Roads: {
-            roads?: components["schemas"]["RoadId"][];
+        RoadCounter: {
+            road: components["schemas"]["RoadID"];
+            counter: components["schemas"]["IntegerString"];
         };
-        /**
-         * @description Kann jede gültige Straßenbezeichnung sein (nicht auf Autobahnen beschränkt). Die Gültigkeit wird nicht überprüft: Abfragen mit nicht existierenden Straßenbezeichnungen liefern einen leeren Datensatz zurück. Die Schreibweise kann von der sonst üblichen Form abweichen (z.B. S1234 statt St1234 für Staatsstraßen).
-         *
-         * @example A1
-         */
-        RoadId: string;
-        /**
-         * @description Rechteck (in WGS84-Koordinaten), das den betroffenen Streckenabschnitt umschließt.
-         * @example 10.728384054665147,54.00605746113356,10.775848767524598,54.09436740278899
-         */
-        Extent: string;
-        /**
-         * @description Beginn des betroffenen Streckenabschnitts (Längengrad und Breitengrad in WGS84). Identisch zu Coordinate, jedoch sind rundungsbedingte Abweichungen möglich.
-         * @example 10.729057,54.006057
-         */
-        Point: string;
-        /**
-         * @description Beginn des betroffenen Streckenabschnitts (Koordinaten in WGS84). Identisch zu Point, jedoch sind rundungsbedingte Abweichungen möglich.
-         * @example {
-         *       "lat": "54.006057",
-         *       "long": "10.729057"
-         *     }
-         */
-        Coordinate: {
-            lat?: components["schemas"]["LatLongValue"];
-            long?: components["schemas"]["LatLongValue"];
-        };
-        LatLongValue: string;
-        /** Format: byte */
-        Identifier: string;
-        /** @example [
-         *       "Beginn: 29.06.2021 09:00",
-         *       "Ende: 28.11.2021 17:00",
-         *       "",
-         *       "Art der Maßnahme:Asphaltdeckenerneuerung",
-         *       "Einschränkungen:Es steht nur 1 Fahrstreifen zur Verfügung.\n\nVollsperrung der AS Eutin Ostseite vom 17.07.2021 - 15.09.2021.\n\nVollsperrung der AS Scharbeutz Ostseite vom 16.09.2021 - 17.11.2021.",
-         *       "Maximale Durchfahrsbreite: 3.25\n"
-         *     ] */
-        MultilineText: string[];
-        /** @description Sinnbild, das die Art des Eintrags beschreibt. Größtenteils sind diese dem offiziellen Verkehrszeichenkatalog entnommen, teilweise allerdings mit abweichender Bedeutung und/oder nicht offiziellen Unternummern. Wo kein passendes Verkehrszeichen existiert, werden nicht-numerische Werte verwendet:
-         *     <ul>
-         *     <li>101: Gefahr</li>
-         *     <li>123: Bauarbeiten</li>
-         *     <li>250: Sperrung</li>
-         *     <li>262-2: Max. 3,5t</li>
-         *     <li>314-50: Park-/Rastplatz (Pkw/Lkw)</li>
-         *     <li>314-50-2: Park-/Rastplatz (nur Pkw)</li>
-         *     <li>448: Anschlussstelle gesperrt</li>
-         *     <li>charging_plug_strong: Schnellladestation für E-Fahrzeuge</li>
-         *     <li>warnkegel: Kurzzeitbaustelle</li>
-         *     </ul>
-         *      */
-        IconRef: string;
-        /** @enum {string} */
-        DisplayType: "ROADWORKS" | "WEBCAM" | "PARKING" | "WARNING" | "WEIGHT_LIMIT_35" | "CLOSURE" | "CLOSURE_ENTRY_EXIT" | "STRONG_ELECTRIC_CHARGING_STATION" | "SHORT_TERM_ROADWORKS" | "ELECTRIC_CHARGING_STATION";
-        /** @example {
-         *       "icon": "almofont almo-picnic_facility",
-         *       "description": "Picknickmöglichkeiten",
-         *       "style": ""
-         *     } */
-        LorryParkingFeatureIcon: {
-            icon?: string;
-            description?: string;
-            style?: string;
+        /** @example A1 */
+        RoadID: string;
+        /** @example DE-NW-000330 */
+        ParkingLotID: string;
+        ParkingLot: {
+            id: components["schemas"]["ParkingLotID"];
+            street: components["schemas"]["RoadID"];
+            hasSvg: boolean;
+            capacity: {
+                truck: number;
+            };
+            free: {
+                truck: number;
+            };
         };
         RoadItem: {
-            extent?: components["schemas"]["Extent"];
-            identifier?: components["schemas"]["Identifier"];
-            routeRecommendation?: Record<string, never>[];
-            coordinate?: components["schemas"]["Coordinate"];
-            footer?: components["schemas"]["MultilineText"];
-            icon?: components["schemas"]["IconRef"];
-            isBlocked?: string;
-            description?: components["schemas"]["MultilineText"];
-            title?: string;
-            point?: components["schemas"]["Point"];
-            display_type?: components["schemas"]["DisplayType"];
-            lorryParkingFeatureIcons?: components["schemas"]["LorryParkingFeatureIcon"][];
-            future?: boolean;
-            subtitle?: string;
+            identifier: string;
+            /** @example A1 | Bremen/Brinkum - Stuhr */
+            title: string;
+            /** @example Arnheim -> Oberhausen */
+            subtitle: string;
+            description: components["schemas"]["MultiLineText"];
+            footer: components["schemas"]["MultiLineText"];
+            routeRecommendation: components["schemas"]["MultiLineText"];
+            display_type: components["schemas"]["DisplayType"];
+            icon: components["schemas"]["Icon"];
+            lorryParkingFeatureIcons: components["schemas"]["LorryParkingFeatureIcon"][];
+            isBlocked: components["schemas"]["BooleanString"];
+            future: boolean;
+            coordinate: components["schemas"]["Coordinate"];
+            point: components["schemas"]["Point"] | null;
+            extent: components["schemas"]["Extend"];
         };
-        RoadEvent: components["schemas"]["RoadItem"] & {
-            /** Format: date-time */
-            startTimestamp?: string;
+        WarningID: string;
+        Warning: {
+            identifier: components["schemas"]["WarningID"];
+            startLcPosition: components["schemas"]["IntegerString"];
+            startTimestamp: components["schemas"]["TimeStamp"];
+            geometry: components["schemas"]["GeoJSONLineString"] | null;
+            delayTimeValue: components["schemas"]["IntegerString"] | null;
+            abnormalTrafficType: components["schemas"]["TrafficType"] | null;
+            averageSpeed: components["schemas"]["FloatString"] | null;
+        } & components["schemas"]["RoadItem"];
+        ClosureID: string;
+        Closure: {
+            identifier: components["schemas"]["ClosureID"];
+            startLcPosition: components["schemas"]["IntegerString"];
+            startTimestamp: components["schemas"]["TimeStamp"] | null;
+            impact: components["schemas"]["Impact"];
+            geometry: components["schemas"]["GeoJSONLineString"] | null;
+        } & components["schemas"]["RoadItem"];
+        RoadworkID: string;
+        Roadwork: {
+            identifier: components["schemas"]["RoadworkID"];
+            startLcPosition: components["schemas"]["IntegerString"];
+            startTimestamp: components["schemas"]["TimeStamp"] | null;
+            impact: components["schemas"]["Impact"];
+            geometry: components["schemas"]["GeoJSONLineString"] | null;
+        } & components["schemas"]["RoadItem"];
+        WebcamID: string;
+        /** @description Noch nicht dokumentiert */
+        Webcam: Record<string, never>;
+        /** @example DE-SL-000008 */
+        ParkingLorryID: string;
+        ParkingLorry: {
+            identifier: components["schemas"]["ParkingLorryID"];
+            startLcPosition: components["schemas"]["IntegerString"] | null;
+        } & components["schemas"]["RoadItem"];
+        /** @example RUxFQ1RSSUNfQ0hBUkdJTkdfU1RBVElPTl9fMTA0Njg= */
+        ElectricChargingStationID: string;
+        ElectricChargingStation: {
+            identifier: components["schemas"]["ElectricChargingStationID"];
+        } & components["schemas"]["RoadItem"];
+        /** @enum {string} */
+        Service: "warning" | "closure" | "roadworks" | "webcam" | "parking_lorry" | "electric_charging_station";
+        /** @enum {string} */
+        Category: "LOS" | "WARNING" | "CLOSURE" | "REROUTING" | "ROADWORKS" | "WEBCAM" | "PARKING" | "PARKING_LORRY" | "STATION" | "FEATURE" | "ELECTRIC_CHARGING_STATION" | "FUEL_STATION";
+        /** @enum {string} */
+        TrafficType: "QUEUING_TRAFFIC" | "SLOW_TRAFFIC" | "STATIONARY_TRAFFIC";
+        /** @enum {string} */
+        Icon: "101" | "123" | "250" | "262-2" | "314-50" | "314-50-2" | "448" | "charging_plug" | "charging_plug_strong" | "warnkegel";
+        /** @enum {string} */
+        DisplayType: "WEBCAM" | "WARNING" | "CLOSURE" | "ROADWORKS" | "SHORT_TERM_ROADWORKS" | "PARKING" | "ELECTRIC_CHARGING_STATION" | "STRONG_ELECTRIC_CHARGING_STATION" | "WEIGHT_LIMIT_35" | "CLOSURE_ENTRY_EXIT" | "CLOSURE_TRUCKS";
+        /** @enum {string} */
+        Symbol: "BORDER_LEFT" | "BORDER_RIGHT" | "BREAKDOWN_LANE" | "CLOSED" | "SEPARATE" | "SEPARATE_TMP" | "ARROW_DOWN" | "ARROW_DOWN_BLUE" | "ARROW_UP" | "ARROW_UP_BLUE";
+        /** @example 47.60,7.60,47.60,7.60 */
+        Extend: string;
+        /** @example 47.60,7.60 */
+        Point: string;
+        /** @example 2024-10-09T07:09:40+02:00 */
+        TimeStamp: string;
+        Coordinate: {
+            lat: number;
+            long: number;
         };
-        Roadworks: {
-            roadworks?: components["schemas"]["Roadwork"][];
+        GeoJSONLineString: {
+            /** @enum {string} */
+            type: "LineString";
+            coordinates: number[][];
         };
-        /** @example {
-         *       "extent": "10.728384054665147,54.00605746113356,10.775848767524598,54.09436740278899",
-         *       "identifier": "Uk9BRFdPUktTX19tZG0uc2hfXzYzMTU=",
-         *       "routeRecommendation": [],
-         *       "coordinate": {
-         *         "lat": "54.006057",
-         *         "long": "10.729057"
-         *       },
-         *       "footer": [],
-         *       "icon": "123",
-         *       "isBlocked": "false",
-         *       "description": [
-         *         "Beginn: 29.06.2021 09:00",
-         *         "Ende: 28.11.2021 17:00",
-         *         "",
-         *         "Art der Maßnahme:Asphaltdeckenerneuerung",
-         *         "Einschränkungen:Es steht nur 1 Fahrstreifen zur Verfügung.\n\nVollsperrung der AS Eutin Ostseite vom 17.07.2021 - 15.09.2021.\n\nVollsperrung der AS Scharbeutz Ostseite vom 16.09.2021 - 17.11.2021.",
-         *         "Maximale Durchfahrsbreite: 3.25\n"
-         *       ],
-         *       "title": "A1 | AS Pansdorf (17) - AS Neustadt-Mitte (14)",
-         *       "point": "10.729057,54.006057",
-         *       "display_type": "ROADWORKS",
-         *       "lorryParkingFeatureIcons": [],
-         *       "future": false,
-         *       "subtitle": "Lübeck Richtung Fehmarn",
-         *       "startTimestamp": "2021-06-29T09:00:00.000+0200"
-         *     } */
-        Roadwork: components["schemas"]["RoadEvent"];
-        Webcams: {
-            webcam?: components["schemas"]["Webcam"][];
+        GeoJSONFeatureCollection: {
+            /** @enum {string} */
+            type: "FeatureCollection";
+            features: components["schemas"]["GeoJSONFeature"][];
         };
-        /** @example {
-         *       "extent": "6.861151,50.987423,6.861151,50.987423",
-         *       "identifier": "V0VCQ0FNX19OUldfU2lsYS1TaWduYWxiYXVfMTAxMDgxMDk4ODE2NDgyOTQ4NTQ=",
-         *       "routeRecommendation": [],
-         *       "coordinate": {
-         *         "lat": "50.987423",
-         *         "long": "6.861151"
-         *       },
-         *       "footer": [
-         *         "ID: WEBCAM__NRW_Sila-Signalbau_10108109881648294854"
-         *       ],
-         *       "icon": "webcam",
-         *       "isBlocked": "false",
-         *       "description": [],
-         *       "title": "A1 | ID005 AK Köln-Nord",
-         *       "operator": "NRW",
-         *       "point": "6.861151,50.987423",
-         *       "display_type": "WEBCAM",
-         *       "lorryParkingFeatureIcons": [],
-         *       "future": false,
-         *       "imageurl": "https://www.verkehr.nrw/webcams/10108109881648294854.jpg",
-         *       "subtitle": "Blickrichtung Dortmund",
-         *       "linkurl": "https://www.blitzvideoserver.de/player_strassennrw.html?serverip=62.113.210.7&serverapp=strassennrw-rtplive&streamname=10108109881648294854"
-         *     } */
-        Webcam: components["schemas"]["RoadItem"] & {
-            operator?: string;
-            /** Format: uri */
-            imageurl?: string;
-            /** Format: uri */
-            linkurl?: string;
+        GeoJSONFeature: {
+            /** @enum {string} */
+            type: "Feature";
+            geometry: components["schemas"]["GeoJSONPoint"];
         };
-        ParkingLorries: {
-            parking_lorry?: components["schemas"]["ParkingLorry"][];
+        GeoJSONPoint: {
+            /** @enum {string} */
+            type: "Point";
+            coordinates: number[];
+            properties: {
+                type: string;
+                country: string;
+                countrycode: string;
+                state: string;
+                city: string | null;
+                postcode: string | null;
+                district: string | null;
+                street: string | null;
+                housnumber: string | null;
+            };
         };
-        /** @example {
-         *       "extent": "10.979849815368652,54.362571716308594,10.979849815368652,54.362571716308594",
-         *       "identifier": "UEFSS0lOR19fbWRtLmxvcnJ5LnBhcmtpbmdfX0RFLVNILTAwMTEwOA==",
-         *       "routeRecommendation": [],
-         *       "coordinate": {
-         *         "lat": "54.362572",
-         *         "long": "10.979850"
-         *       },
-         *       "footer": [],
-         *       "icon": "314-50",
-         *       "isBlocked": "false",
-         *       "description": [
-         *         "PKW Stellplätze: 21 ",
-         *         "LKW Stellplätze: 20 "
-         *       ],
-         *       "title": "A 1 | Richtung Puttgarden",
-         *       "point": "10.979850,54.362572",
-         *       "display_type": "PARKING",
-         *       "lorryParkingFeatureIcons": [
-         *         {
-         *           "icon": "almofont almo-picnic_facility",
-         *           "description": "Picknickmöglichkeiten",
-         *           "style": ""
-         *         },
-         *         {
-         *           "icon": "almofont almo-restroom",
-         *           "description": "Toilette vorhanden",
-         *           "style": ""
-         *         }
-         *       ],
-         *       "future": false,
-         *       "subtitle": "(Ostseeblick S)"
-         *     } */
-        ParkingLorry: components["schemas"]["RoadItem"];
-        Warnings: {
-            warning?: components["schemas"]["Warning"][];
+        Impact: {
+            /** @example Aachen */
+            lower: string | null;
+            /** @example Bochum */
+            upper: string | null;
+            symbols: (components["schemas"]["Symbol"] | null)[];
         };
-        /** @example {
-         *       "extent": "8.61785,52.97344,8.69904,53.00507",
-         *       "identifier": "V0FSTklOR19fbWRtLnZpel9fTE1TLU5JL3JfTE1TLU5JLzIxMjI2MF9EICBOSSBMTVMtTkkgIC4w",
-         *       "routeRecommendation": [],
-         *       "coordinate": {
-         *         "lat": "53.005070",
-         *         "long": "8.699040"
-         *       },
-         *       "footer": [],
-         *       "icon": "101",
-         *       "isBlocked": "false",
-         *       "description": [
-         *         "Beginn: 25.05.2021 00:00",
-         *         "Ende: 30.11.2021 23:59",
-         *         "",
-         *         "A1 Bremen Richtung Osnabrück",
-         *         "zwischen Dreieck Stuhr und Groß Ippener",
-         *         "Fahrbahnverengung, geänderte Verkehrsführung, Staugefahr, bis voraussichtlich 30.11.2021",
-         *         "Erweiterung PWC Kiekut."
-         *       ],
-         *       "title": "A1 | AS Delmenhorst-Ost (58b) - AS Groß Ippener (59)",
-         *       "point": "8.699040,53.005070",
-         *       "display_type": "WARNING",
-         *       "lorryParkingFeatureIcons": [],
-         *       "future": false,
-         *       "subtitle": "Bremen Richtung Osnabrück",
-         *       "startTimestamp": "2021-05-25T00:00:00.000+0200"
-         *     } */
-        Warning: components["schemas"]["RoadEvent"];
-        Closures: {
-            closure?: components["schemas"]["Closure"][];
+        LorryParkingFeatureIcon: {
+            /** @example almofont almo-picnic_facility */
+            icon: string;
+            /** @example Picknickmöglichkeiten */
+            description: string;
+            style: string;
         };
-        /** @example {
-         *       "extent": "6.95325,51.02996,6.96491,51.03644",
-         *       "identifier": "Q0xPU1VSRV9fbWRtLnZpel9fTE1TLU5XL3JfTE1TLU5XLzMxNTEyMV9EICBOVyBMTVMtTlcuMA==",
-         *       "routeRecommendation": [],
-         *       "coordinate": {
-         *         "lat": "51.036440",
-         *         "long": "6.964910"
-         *       },
-         *       "footer": [],
-         *       "icon": "262-2",
-         *       "isBlocked": "false",
-         *       "description": [
-         *         "Beginn: 20.06.2021 14:19",
-         *         "Ende: 31.12.2025 23:59",
-         *         "",
-         *         "A1 Dortmund - Köln",
-         *         "Leverkusener Brücke",
-         *         "in beiden Richtungen gesperrt für LKW über 3,5 t, bis 31.12.2025"
-         *       ],
-         *       "title": "A1 | AK Leverkusen-West (99) - AS Köln-Niehl (100)",
-         *       "point": "6.964910,51.036440",
-         *       "display_type": "WEIGHT_LIMIT_35",
-         *       "lorryParkingFeatureIcons": [],
-         *       "future": false,
-         *       "subtitle": "Dortmund Richtung Köln",
-         *       "startTimestamp": "2021-06-20T14:19:26.000+0200"
-         *     } */
-        Closure: components["schemas"]["RoadEvent"];
-        ElectricChargingStations: {
-            electric_charging_station?: components["schemas"]["ElectricChargingStation"][];
-        };
-        /** @example {
-         *       "extent": "9.176298,53.090847,9.176298,53.090847",
-         *       "identifier": "RUxFQ1RSSUNfQ0hBUkdJTkdfU1RBVElPTl9fMTI2OTk=",
-         *       "routeRecommendation": [],
-         *       "coordinate": {
-         *         "lat": "53.090847",
-         *         "long": "9.176298"
-         *       },
-         *       "footer": [],
-         *       "icon": "charging_plug_strong",
-         *       "isBlocked": "false",
-         *       "description": [
-         *         "A1 | Bremen | Raststätte Grundbergsee Nord",
-         *         "27376 Sottrum",
-         *         "",
-         *         "Ladepunkt 1:",
-         *         "AC Kupplung Typ 2",
-         *         "43 kW",
-         *         "",
-         *         "Ladepunkt 2:",
-         *         "DC Kupplung Combo, DC CHAdeMO",
-         *         "50 kW"
-         *       ],
-         *       "title": "A1 | Bremen | Raststätte Grundbergsee Nord",
-         *       "point": "9.176298,53.090847",
-         *       "display_type": "STRONG_ELECTRIC_CHARGING_STATION",
-         *       "lorryParkingFeatureIcons": [],
-         *       "future": false,
-         *       "subtitle": "Schnellladeeinrichtung"
-         *     } */
-        ElectricChargingStation: components["schemas"]["RoadItem"];
+        MultiLineText: string[];
+        /** @enum {string} */
+        BooleanString: "false" | "true";
+        /** @example 1 */
+        IntegerString: string;
+        /** @example 1.7 */
+        FloatString: string;
+        /** @enum {string} */
+        ImageFilename: "314-50.png" | "314-50.svg" | "361-50.png" | "361-50.svg" | "376.png" | "376.svg" | "377.png" | "377.svg" | "AOS-Schriftzug1.png" | "Hauptpunkt.png" | "Hauptpunkt.svg" | "Hauptpunkt_on.svg" | "Kamera karte.png" | "Kamera karte.svg" | "Kamera_cluster.svg" | "LKW.svg" | "Lkw_P_b.png" | "PWC.png" | "RM.png" | "Stau_karte.png" | "Stau_karte.svg" | "Stau_off.svg" | "Stau_on.svg" | "TK.png" | "TR.png" | "TRM.png" | "Thumbs.db" | "VZ.svg" | "VZ_on.svg" | "Vz_Karte.png" | "Vz_Karte.svg" | "aag_winkel.svg" | "alternativroute.svg" | "anzahl.svg" | "baustelle_cluster.svg" | "baustelle_navi.svg" | "baustelle_navi_on.svg" | "close.svg" | "dWista-off.svg" | "dWista-on.svg" | "dauerbaustellen_Karte.png" | "dauerbaustellen_Karte.svg" | "deWista Karte.png" | "deWista Karte.svg" | "deWista Karte_MitKreis.png" | "deWista Karte_mitKreis.svg" | "deWista_cluster.svg" | "dreieck_baustelle.png" | "dreieck_stau.png" | "hauptroute.svg" | "impact/ARROW_DOWN.png" | "impact/ARROW_UP.png" | "impact/BORDER_LEFT.png" | "impact/BORDER_RIGHT.png" | "impact/BREAKDOWN_LANE.png" | "impact/CLOSED.png" | "impact/SEPARATE.png" | "korridore_off.svg" | "korridore_on.svg" | "logo_autobahn_white.svg" | "los_off.svg" | "los_on.svg" | "s.png" | "slide_in.svg" | "slide_in_right.svg" | "slide_out.svg" | "slide_out_right.svg" | "son.png" | "stau_cluster.png" | "stau_cluster.svg" | "stvo-101-gefahrstelle.png" | "stvo-123-arbeitsstelle.png" | "stvo-123-arbeitsstelle_geplant.png" | "stvo-124-stau.png" | "stvo-250-verbot.png" | "stvo-250-verbot_geplant.png" | "tagesbaustelle karte.svg" | "tagesbaustelle kluster.svg" | "tagesbaustelle_geortet_off.svg" | "v.png" | "verkehrslage_off.svg" | "verkehrslage_on.svg" | "vollsperrung karte.png" | "vollsperrung karte.svg" | "vollsperrung kluster.svg" | "vollsperrung_off.svg" | "vollsperrung_on.svg" | "warnkegel.png" | "warnkegel.svg" | "warnkegel_geplant.png" | "webcam_off.svg" | "webcam_on.svg";
     };
     responses: never;
-    parameters: never;
+    parameters: {
+        Offset: number;
+        Limit: number;
+        Order: number;
+        Service: components["schemas"]["Service"];
+        RoadID: components["schemas"]["RoadID"];
+        /** @example 16 */
+        Longitude: number;
+        /** @example 11 */
+        Latitude: number;
+        /** @example 5 */
+        Zoom: number;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
 };
 export type $defs = Record<string, never>;
-export interface operations {
-    "list-autobahnen": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Roads"];
-                };
-            };
-        };
-    };
-    "list-roadworks": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roadId: components["schemas"]["RoadId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Roadworks"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "get-roadwork": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roadworkId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Roadwork"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "list-webcams": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roadId: components["schemas"]["RoadId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Webcams"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "get-webcam": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                webcamId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Webcam"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "list-parking-lorries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roadId: components["schemas"]["RoadId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParkingLorries"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "get-parking-lorry": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                lorryId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParkingLorry"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "list-warnings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roadId: components["schemas"]["RoadId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Warnings"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "get-warning": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                warningId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Warning"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "list-closures": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roadId: components["schemas"]["RoadId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Closures"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "get-closure": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                closureId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Closure"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "list-charging-stations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                roadId: components["schemas"]["RoadId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ElectricChargingStations"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    "get-charging-station": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                stationId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Success */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ElectricChargingStation"];
-                };
-            };
-            /** @description Not found. */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Internal server error. */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-}
+export type operations = Record<string, never>;
