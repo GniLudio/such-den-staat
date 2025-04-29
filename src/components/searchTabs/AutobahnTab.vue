@@ -5,8 +5,8 @@
                 :loading="store.roads.isFetching" :rules="[rules.notEmpty]" show-toggle-all></MultiSelect>
         </v-col>
         <v-col :cols="12" :md="6" class="pt-md-3 pt-1">
-            <MultiSelect label="Informationen" :items="store.services.map((s) => s.title)"
-                v-model="store.selectedServices" hide-toggle-all :rules="[rules.notEmpty]"></MultiSelect>
+            <MultiSelect label="Informationen" :items="store.services" v-model="store.selectedServices" hide-toggle-all
+                :rules="[rules.notEmpty]" item-title="title" item-value="id"></MultiSelect>
         </v-col>
     </v-row>
 </template>
@@ -20,12 +20,13 @@
 
 
     type RoadItem = components["schemas"]["RoadItem"];
+    type LineString = components["schemas"]["GeoJSONLineString"];
 
     const store = useAutobahnStore();
     const { appContext } = getCurrentInstance()!;
 
     const rules = {
-        notEmpty: (value: unknown[]) => value.length > 0,
+        notEmpty: (value: any[]) => value.length > 0,
     };
 
     defineExpose({
@@ -37,22 +38,22 @@
         const markerGroup = useLeafletStore().getMarkerGroup();
 
         for (const roadwork of store.selectedRoads) {
-            for (const serviceTitle of store.selectedServices) {
-                const service = store.getService(serviceTitle);
+            for (const serviceID of store.selectedServices) {
+                const service = store.getService(serviceID);
                 if (!service) {
-                    console.warn("Service not found", roadwork, serviceTitle);
+                    console.warn("Service not found", roadwork, serviceID);
                     continue;
                 }
 
-                const url = store.getServiceUrl(roadwork, service.path);
+                const url = store.getServiceUrl(roadwork, service.id);
                 promises.push(
                     fetch(url, { signal }).then((data) => data.json()).then((json) => {
-                        const elements: any[] | undefined = json[service.listField];
-                        if (!elements) {
+                        const roadItems: RoadItem[] | undefined = json[service.listField];
+                        if (!roadItems) {
                             console.warn("Wrong listfield", service, json);
                             return;
                         } else {
-                            const markers = elements?.map((e) => createMarker(e)) ?? [];
+                            const markers = roadItems.map((e) => createMarker(e)) ?? [];
                             markers.forEach((m) => m?.addTo(markerGroup));
                         }
                     })
@@ -62,20 +63,75 @@
         return promises;
     }
 
-    function createMarker(roadItem: RoadItem): L.Marker | undefined {
-        if (!roadItem.coordinate?.lat || !roadItem.coordinate.long) return undefined;
-        const lat = roadItem.coordinate.lat as unknown as number;
-        const long = roadItem.coordinate.long as unknown as number;
+    function createMarker(roadItem: RoadItem & { geometry?: LineString }): L.Marker | undefined {
+        const lat = roadItem.coordinate.lat;
+        const long = roadItem.coordinate.long;
         const marker = L.marker([lat, long]);
 
-        const tooltip = document.createElement("div");
-
+        const div = document.createElement("div");
         const content = createApp(RoadItemTooltip, { roadItem });
         Object.assign(content._context, appContext);
-        content.mount(tooltip);
+        content.mount(div);
 
-        marker.bindPopup(tooltip);
+        const popup = marker.bindPopup(div);
+
+        const visual = createVisual(roadItem);
+        let isPopupOpen: boolean = false;
+        let isHovering: boolean = false;
+        popup.on("mouseover", () => {
+            isHovering = true;
+            updateVisualVisibility(visual, isPopupOpen || isHovering)
+        });
+        popup.on("popupopen", () => {
+            isPopupOpen = true;
+            updateVisualVisibility(visual, isPopupOpen || isHovering)
+        })
+        popup.on("mouseout", () => {
+            isHovering = false;
+            updateVisualVisibility(visual, isPopupOpen || isHovering)
+        });
+        popup.on("popupclose", () => {
+            isPopupOpen = false;
+            updateVisualVisibility(visual, isPopupOpen || isHovering)
+        });
+
         return marker;
+    }
+
+    function updateVisualVisibility(visual: L.Layer, visible: boolean): void {
+        if (visible) {
+            visual.addTo(useLeafletStore().getMap());
+        } else {
+            visual.remove();
+        }
+    }
+
+    function createVisual(roadItem: RoadItem & { geometry?: LineString }): L.Layer {
+        let visual: L.Layer;
+
+        const [lat1, long1, lat2, long2] = roadItem.extent.split(",").map(Number.parseFloat);
+        const extent = L.polygon([
+            [lat1, long1],
+            [lat1, long2],
+            [lat2, long2],
+            [lat2, long1],
+        ]);
+
+
+        if (roadItem.geometry) {
+            const geometry = L.geoJSON(roadItem.geometry);
+            const bounds = geometry.getBounds();
+            if (bounds.getNorth() != bounds.getSouth() || bounds.getWest() != bounds.getEast()) {
+                visual = geometry;
+            } else {
+                visual = extent;
+            }
+
+        } else {
+            visual = extent;
+        }
+
+        return visual;
     }
 </script>
 <style lang="css">
