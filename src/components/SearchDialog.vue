@@ -1,12 +1,6 @@
 <template>
-    <v-card class="justify-content px-3 pb-1">
-        <div class="d-flex">
-            <v-tabs v-model="tab" align-tabs="center" class="w-100 mb-2" center-active>
-                <v-tab :value="t.id" v-for="t in tabs">{{ t.label }}</v-tab>
-            </v-tabs>
-            <SearchButton class="my-auto" @search="search" :disabled="searchDisabled" :loading="loading" />
-        </div>
-        <v-tabs-window v-model="tab" class="mb-1">
+    <v-card class="justify-content pa-2 pb-0">
+        <v-tabs-window v-model="tab">
             <v-tabs-window-item :value="t.id" v-for="t in tabs">
                 <v-form v-model="valids[t.id]">
                     <component :is="t.component" :ref="(ref: TabComponent) => refs[t.id] = ref" />
@@ -14,6 +8,13 @@
             </v-tabs-window-item>
         </v-tabs-window>
         <v-progress-linear :model-value="loadingProgress" :class="{ 'opacity-0': !loading }"></v-progress-linear>
+        <div class="d-flex pt-1">
+            <v-tabs v-model="tab" align-tabs="center" class="w-100" center-active>
+                <v-tab :value="t.id" v-for="t in tabs">{{ t.label }}</v-tab>
+            </v-tabs>
+            <SearchButton class="my-auto" @search="search" :disabled="searchDisabled" :loading="loading" />
+        </div>
+
     </v-card>
 </template>
 <script setup lang="ts">

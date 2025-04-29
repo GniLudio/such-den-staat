@@ -4,7 +4,7 @@
             <MultiSelect label="Autobahnen" :items="store.roads.data?.roads" v-model="store.selectedRoads"
                 :loading="store.roads.isFetching" :rules="[rules.notEmpty]" show-toggle-all></MultiSelect>
         </v-col>
-        <v-col :cols="12" :md="6" class="pt-md-3">
+        <v-col :cols="12" :md="6" class="pt-md-3 pt-2">
             <MultiSelect label="Informationen" :items="store.services" v-model="store.selectedServices" hide-toggle-all
                 :rules="[rules.notEmpty]" item-title="title" item-value="id"></MultiSelect>
         </v-col>
