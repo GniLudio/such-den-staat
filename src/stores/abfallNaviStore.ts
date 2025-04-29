@@ -70,7 +70,7 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
             streetNumber.value = undefined;
         },
         afterFetch: (ctx) => {
-            const data: StreetNumber[] = ctx.data.hausNrList;
+            const data: StreetNumber[] = 'hausNrList' in ctx.data ? ctx.data.hausNrList : [];
             for (const streetNumber of (streetNumbers.data.value ?? [])) {
                 if (!data.find((other) => streetNumber.id == other.id)) {
                     data.push(streetNumber);
