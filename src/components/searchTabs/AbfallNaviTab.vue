@@ -54,12 +54,6 @@
         notEmpty: (a: any[]) => a.length > 0,
     }
 
-    watch(computed(() => store.trashTypes.data), (newValue) => {
-        if (newValue.length > 0) {
-            console.log(newValue.map((i) => [i.id, i.name]).flat())
-        }
-    });
-
     defineExpose({
         search,
     });

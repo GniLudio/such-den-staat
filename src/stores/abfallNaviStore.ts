@@ -1,6 +1,6 @@
 import { useFetch, type UseFetchReturn } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { computed, type Ref, ref, type ComputedRef, reactive, type Reactive } from "vue";
+import { computed, type Ref, ref, type ComputedRef, reactive, type Reactive, watch } from "vue";
 
 export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     // Fields
@@ -112,16 +112,17 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
             trashTypesHouseNumber.data.value = [];
         },
     }).get().json();
-    const trashTypes: Reactive<{ isFetching: boolean, data: TrashType[], level: TrashTypeLevel | undefined }> = reactive({
-        isFetching: computed(() => trashTypesRegion.isFetching.value || trashTypesStreet.isFetching.value || trashTypesHouseNumber.isFetching.value),
+    const trashTypes: Reactive<{ isFetching: Ref<boolean>, data: Ref<TrashType[]>, level: Ref<TrashTypeLevel | undefined> }> = reactive({
+        isFetching: computed<boolean>(() => trashTypesRegion.isFetching.value || trashTypesStreet.isFetching.value || trashTypesHouseNumber.isFetching.value),
         data: computed<TrashType[]>(() => {
-            selectedTrashTypes.value = []; // TODO: Cache previous selected values
+            let data = [];
             switch (trashTypes.level) {
-                case "HouseNumber": return trashTypesHouseNumber.data.value ?? []; break;
-                case "Street": return trashTypesStreet.data.value ?? []; break;
-                case "Region": return trashTypesRegion.data.value ?? []; break;
+                case "HouseNumber": data = trashTypesHouseNumber.data.value ?? []; break;
+                case "Street": data = trashTypesStreet.data.value ?? []; break;
+                case "Region": data = trashTypesRegion.data.value ?? []; break;
             }
-            return []
+            selectedTrashTypes.value = data.map((t) => t.id);
+            return data;
         }),
         level: computed<TrashTypeLevel | undefined>(() => {
             if (houseNumber.value) return "HouseNumber";
