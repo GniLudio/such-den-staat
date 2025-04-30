@@ -7,10 +7,10 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     const region: Ref<RegionID | undefined> = ref();
     const place: Ref<PlaceID | undefined> = ref();
     const street: Ref<StreetID | undefined> = ref();
-    const streetNumber: Ref<StreetNumberID | undefined> = ref();
+    const houseNumber: Ref<StreetNumberID | undefined> = ref();
+    const selectedTrashTypes: Ref<TrashTypeID[]> = ref([]);
 
     // API at https://abfallnavi.api.bund.dev/
-    // Urls
     const apiUrl: ComputedRef<string | undefined> = computed(
         () => region.value ? `https://${region.value}-abfallapp.regioit.de/abfall-app-${region.value}/rest` : undefined
     );
@@ -28,15 +28,15 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
         () => apiUrl.value && street.value ? `${apiUrl.value}/strassen/${street.value}` : undefined
     )
     // Trash Types 
-    const regionTrashTypesUrl: ComputedRef<string | undefined> = computed(
+    const trashTypesRegionUrl: ComputedRef<string | undefined> = computed(
         () => apiUrl.value ? `${apiUrl.value}/fraktionen` : undefined
     );
-    const streetTrashTypesUrl: ComputedRef<string | undefined> = computed(
+    const trashTypesStreetUrl: ComputedRef<string | undefined> = computed(
         () => apiUrl.value && street.value ? `${apiUrl.value}/strassen/${street.value}/fraktionen` : undefined
     );
-    const streetNumberTrashTypesUrl: ComputedRef<string | undefined> = computed(
-        () => apiUrl.value && streetNumber.value ? `${apiUrl.value}/hausnummern/${streetNumber.value}/fraktionen` : undefined
-    );
+    const trashTypesHouseNumberUrl: ComputedRef<string | undefined> = computed(
+        () => apiUrl.value && houseNumber.value ? `${apiUrl.value}/hausnummern/${houseNumber.value}/fraktionen` : undefined
+    )
 
     // Lists
     const regions: Ref<Region[]> = ref([
@@ -62,31 +62,74 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     ]);
     const places: UseFetchReturn<Place[]> = useFetchHelper(computed(() => placesUrl.value ?? ''), place, 'id');
     const streets: UseFetchReturn<Street[]> = useFetchHelper(computed(() => streetsUrl.value ?? ''), street, 'id');
-    const streetNumbers: UseFetchReturn<StreetNumber[]> = useFetch(computed(() => streetNumbersUrl.value ?? ''), {
+    const houseNumbers: UseFetchReturn<HouseNumber[]> = useFetch(computed(() => streetNumbersUrl.value ?? ''), {
         initialData: [],
         refetch: true,
         beforeFetch: () => {
-            streetNumbers.data.value = [];
-            streetNumber.value = undefined;
+            houseNumbers.data.value = [];
+            houseNumber.value = undefined;
         },
         afterFetch: (ctx) => {
-            const data: StreetNumber[] = 'hausNrList' in ctx.data ? ctx.data.hausNrList : [];
-            for (const streetNumber of (streetNumbers.data.value ?? [])) {
-                if (!data.find((other) => streetNumber.id == other.id)) {
-                    data.push(streetNumber);
+            const data: HouseNumber[] = 'hausNrList' in ctx.data ? ctx.data.hausNrList : [];
+            for (const houseNumber of (houseNumbers.data.value ?? [])) {
+                if (!data.find((other) => houseNumber.id == other.id)) {
+                    data.push(houseNumber);
                 }
             }
             ctx.data = data;
-            streetNumber.value = ctx.data[0].id;
+            houseNumber.value = ctx.data[0].id;
             return ctx;
         }
     }).get().json();
+    const trashTypesRegion: UseFetchReturn<any[]> = useFetch(computed(() => trashTypesRegionUrl.value ?? ''), {
+        initialData: [],
+        refetch: true,
+        beforeFetch() {
+            trashTypesRegion.data.value = [];
+        },
+    }).get().json();
+    const trashTypesStreet: UseFetchReturn<any[]> = useFetch(computed(() => trashTypesStreetUrl.value ?? ''), {
+        initialData: [],
+        refetch: true,
+        beforeFetch() {
+            trashTypesStreet.data.value = [];
+        },
+    }).get().json();;
+    const trashTypesHouseNumber: UseFetchReturn<any[]> = useFetch(computed(() => trashTypesHouseNumberUrl.value ?? ''), {
+        initialData: [],
+        refetch: true,
+        beforeFetch() {
+            trashTypesHouseNumber.data.value = [];
+        },
+    }).get().json();
+    const trashTypes: { isFetching: Ref<boolean>, data: Ref<TrashType[]>, level: Ref<TrashTypeLevel | undefined> } = {
+        isFetching: computed(() => trashTypesRegion.isFetching.value || trashTypesStreet.isFetching.value || trashTypesHouseNumber.isFetching.value),
+        data: computed<TrashType[]>(() => {
+            let data = [];
+            switch (trashTypes.level.value) {
+                case "HouseNumber": data = trashTypesHouseNumber.data.value ?? []; break;
+                case "Street": data = trashTypesStreet.data.value ?? []; break;
+                case "Region": data = trashTypesRegion.data.value ?? []; break;
+            }
+            console.log(data);
+            return data;
+        }),
+        level: computed<TrashTypeLevel | undefined>(() => {
+            if (houseNumber.value) return "HouseNumber";
+            else if (street.value) return "Street";
+            else if (region.value) return "Region";
+            else return undefined;
+        })
+    }
+
+
 
     return {
         regions, region,
         places, place,
         streets, street,
-        streetNumbers, streetNumber
+        houseNumbers, houseNumber,
+        trashTypes, selectedTrashTypes,
     };
 });
 
@@ -116,10 +159,16 @@ type StreetID = number;
 interface Street {
     id: StreetID,
     name: string,
-    hausNrList: StreetNumber[],
+    hausNrList: HouseNumber[],
 }
 type StreetNumberID = number;
-interface StreetNumber {
+interface HouseNumber {
     id: StreetNumberID,
     nr: string,
+}
+type TrashTypeID = any;
+type TrashTypeLevel = "Region" | "Street" | "HouseNumber"
+interface TrashType {
+    id: TrashTypeID;
+    name: string;
 }
