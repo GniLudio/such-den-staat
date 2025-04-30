@@ -36,7 +36,7 @@
             default: false,
         }
     });
-    const model = defineModel<T[]>({
+    const model = defineModel<(T | any)[]>({
         type: Array<T>,
         default: new Array(0),
     });

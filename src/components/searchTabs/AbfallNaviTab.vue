@@ -24,14 +24,16 @@
                 class="select-centered" :menu-props="{ contentClass: 'select-centered' }" />
         </v-col>
         <v-col>
-            <MultiSelect :label="trashTypesLabel" no-data-text="Keine Müllart gefunden" :items="store.trashTypes.data"
-                item-value="id" item-title="name" />
+            <MultiSelect :label="trashTypesLabel" no-data-text="Keine Müllarten gefunden" :items="store.trashTypes.data"
+                v-model="store.selectedTrashTypes" :loading="store.trashTypes.isFetching" :rules="[rules.notEmpty]"
+                item-value="id" item-title="name" hide-details clearable class="select-centered"
+                :menu-props="{ contentClass: 'select-centered' }" />
         </v-col>
     </v-row>
 </template>
 <script setup lang="ts">
     import { useAbfallNaviStore } from '@/stores/abfallNaviStore';
-    import { computed, onMounted } from 'vue';
+    import { computed, onMounted, watch } from 'vue';
     import MultiSelect from '../MultiSelect.vue';
 
     const store = useAbfallNaviStore();
@@ -49,7 +51,14 @@
 
     const rules = {
         notUndefined: (a?: any) => a != undefined,
+        notEmpty: (a: any[]) => a.length > 0,
     }
+
+    watch(computed(() => store.trashTypes.data), (newValue) => {
+        if (newValue.length > 0) {
+            console.log(newValue.map((i) => [i.id, i.name]).flat())
+        }
+    });
 
     defineExpose({
         search,
@@ -60,6 +69,17 @@
     })
 
     function search(): Promise<void>[] {
+        if (store.appointmentsUrl) {
+            console.log(store.appointmentsUrl);
+            return [
+                fetch(store.appointmentsUrl)
+                    .then(async (data) => data.json())
+                    .then((json) => {
+                        console.log(json[0]);
+
+                    })
+            ]
+        }
         return [];
     }
 </script>

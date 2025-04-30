@@ -1,6 +1,6 @@
 import { useFetch, type UseFetchReturn } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { computed, type Ref, ref, type ComputedRef } from "vue";
+import { computed, type Ref, ref, type ComputedRef, reactive, type Reactive } from "vue";
 
 export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     // Fields
@@ -8,7 +8,7 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     const place: Ref<PlaceID | undefined> = ref();
     const street: Ref<StreetID | undefined> = ref();
     const houseNumber: Ref<StreetNumberID | undefined> = ref();
-    const selectedTrashTypes: Ref<TrashTypeID[]> = ref([]);
+    const selectedTrashTypes: Ref<TrashTypeID[]> = ref<TrashTypeID[]>([]);
 
     // API at https://abfallnavi.api.bund.dev/
     const apiUrl: ComputedRef<string | undefined> = computed(
@@ -36,6 +36,16 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     );
     const trashTypesHouseNumberUrl: ComputedRef<string | undefined> = computed(
         () => apiUrl.value && houseNumber.value ? `${apiUrl.value}/hausnummern/${houseNumber.value}/fraktionen` : undefined
+    );
+    const trashTypesQuery: ComputedRef<string> = computed(() => selectedTrashTypes.value.map((t) => `fraktion=${t}`).join("&"));
+    const appointmentsStreetUrl: ComputedRef<string | undefined> = computed(
+        () => apiUrl.value && street.value ? `${apiUrl.value}/strassen/${street.value}/termine?${trashTypesQuery.value}` : undefined
+    );
+    const appointment: ComputedRef<string | undefined> = computed(
+        () => apiUrl.value && houseNumber.value ? `${apiUrl.value}/hausnummern/${houseNumber.value}/termine?${trashTypesQuery.value}` : undefined
+    );
+    const appointmentsUrl: ComputedRef<string | undefined> = computed(
+        () => appointment.value ?? appointmentsStreetUrl.value ?? undefined
     )
 
     // Lists
@@ -102,16 +112,16 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
             trashTypesHouseNumber.data.value = [];
         },
     }).get().json();
-    const trashTypes: { isFetching: Ref<boolean>, data: Ref<TrashType[]>, level: Ref<TrashTypeLevel | undefined> } = {
+    const trashTypes: Reactive<{ isFetching: boolean, data: TrashType[], level: TrashTypeLevel | undefined }> = reactive({
         isFetching: computed(() => trashTypesRegion.isFetching.value || trashTypesStreet.isFetching.value || trashTypesHouseNumber.isFetching.value),
         data: computed<TrashType[]>(() => {
-            let data = [];
-            switch (trashTypes.level.value) {
-                case "HouseNumber": data = trashTypesHouseNumber.data.value ?? []; break;
-                case "Street": data = trashTypesStreet.data.value ?? []; break;
-                case "Region": data = trashTypesRegion.data.value ?? []; break;
+            selectedTrashTypes.value = []; // TODO: Cache previous selected values
+            switch (trashTypes.level) {
+                case "HouseNumber": return trashTypesHouseNumber.data.value ?? []; break;
+                case "Street": return trashTypesStreet.data.value ?? []; break;
+                case "Region": return trashTypesRegion.data.value ?? []; break;
             }
-            return data;
+            return []
         }),
         level: computed<TrashTypeLevel | undefined>(() => {
             if (houseNumber.value) return "HouseNumber";
@@ -119,9 +129,7 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
             else if (region.value) return "Region";
             else return undefined;
         })
-    }
-
-
+    });
 
     return {
         regions, region,
@@ -129,6 +137,7 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
         streets, street,
         houseNumbers, houseNumber,
         trashTypes, selectedTrashTypes,
+        appointmentsUrl
     };
 });
 
@@ -147,6 +156,7 @@ function useFetchHelper<ID, Item>(url: Ref<string>, item: Ref<ID | undefined>, i
         }
     }).get().json();
     return items;
+
 }
 
 // Types
@@ -165,9 +175,23 @@ interface HouseNumber {
     id: StreetNumberID,
     nr: string,
 }
-type TrashTypeID = any;
+type TrashTypeID = number;
 type TrashTypeLevel = "Region" | "Street" | "HouseNumber"
 interface TrashType {
     id: TrashTypeID;
     name: string;
+}
+type AppointmentID = number;
+
+interface Appointment {
+    id: AppointmentID;
+    datum: string;
+    jahr: number;
+    info: null;
+    bezirk: {
+        id: number;
+        fraktionId: TrashTypeID;
+        name: string;
+        gueltigAb: string;
+    }
 }
