@@ -111,7 +111,6 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
                 case "Street": data = trashTypesStreet.data.value ?? []; break;
                 case "Region": data = trashTypesRegion.data.value ?? []; break;
             }
-            console.log(data);
             return data;
         }),
         level: computed<TrashTypeLevel | undefined>(() => {
