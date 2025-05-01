@@ -2,14 +2,14 @@
     <v-select :label="label" :items="items" v-model="model" multiple chips hide-details :suffix="suffix" ref="vselect"
         class="select-centered" :menu-props="{ contentClass: 'select-centered' }">
         <template v-slot:prepend-item v-if="showToggleAll">
-            <v-list-item :title="`Alle ${label}`" @click="toggleAllSelected" class="mb-2">
+            <v-list-item :title="allSelectedText ?? `Alle ${label}`" @click="toggleAllSelected" class="mb-2">
                 <template v-slot:prepend>
                     <v-checkbox-btn :model-value="allSelected" style="pointer-events: none"></v-checkbox-btn>
                 </template>
             </v-list-item>
         </template>
         <template v-slot:chip="{ item, index }">
-            <v-label v-if="allSelected && index == 0">Alle {{ label }}</v-label>
+            <v-label v-if="allSelected && index == 0"> {{ allSelectedText ?? `Alle ${label}` }}</v-label>
             <v-chip v-else-if="!allSelected">{{ item.title }}</v-chip>
         </template>
     </v-select>
@@ -34,6 +34,10 @@
         sortSelected: {
             type: Boolean,
             default: false,
+        },
+        allSelectedText: {
+            type: String,
+            default: undefined,
         }
     });
     const model = defineModel<(T | any)[]>({
