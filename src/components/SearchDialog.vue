@@ -1,6 +1,6 @@
 <template>
-    <v-card class="justify-content pa-2 pb-0">
-        <v-tabs-window v-model="tab">
+    <v-card>
+        <v-tabs-window v-model="tab" class="pa-2">
             <v-tabs-window-item :value="t.id" v-for="t in tabs">
                 <v-form v-model="valids[t.id]">
                     <component :is="t.component" :ref="(ref: TabComponent) => refs[t.id] = ref" />
@@ -8,7 +8,7 @@
             </v-tabs-window-item>
         </v-tabs-window>
         <v-progress-linear :model-value="loadingProgress" :class="{ 'opacity-0': !loading }"></v-progress-linear>
-        <div class="d-flex pt-1">
+        <div class="d-flex">
             <v-tabs v-model="tab" align-tabs="center" class="w-100" center-active>
                 <v-tab :value="t.id" v-for="t in tabs">{{ t.label }}</v-tab>
             </v-tabs>
