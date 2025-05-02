@@ -34,7 +34,10 @@
 <script setup lang="ts">
     import { useAbfallNaviStore } from '@/stores/abfallNaviStore';
     import MultiSelect from '../MultiSelect.vue';
-    import { computed, onMounted, ref } from 'vue';
+    import { computed } from 'vue';
+    import { useNominatimStore } from '@/stores/nominatimStore';
+    import { useLeafletStore } from '@/stores/leafletStore';
+    import L from 'leaflet';
 
     const store = useAbfallNaviStore();
 
@@ -45,7 +48,6 @@
             case 'Region': return "Müllarten (Region)"
             case undefined:
             default: return "Müllarten"
-
         }
     });
 
@@ -59,6 +61,27 @@
     });
 
     function search(): Promise<void>[] {
+        const country = "Deutschland";
+        const state = undefined;
+        const county = undefined;
+        const city = store.places.data?.find((place) => place.id == store.place)?.name;
+        const street = store.streets.data?.find((street) => street.id == store.street)?.name;
+        const houseNumber = store.houseNumbers.data?.find((houseNumber) => houseNumber.id == store.houseNumber)?.nr;
+        const amenity = undefined;
+
+        const streetAndNumber = houseNumber ? `${street} ${houseNumber}` : street ? street : undefined;
+
+        const markerGroup = useLeafletStore().getMarkerGroup();
+
+        return [
+            useNominatimStore().search(country, state, county, city, street, amenity)
+                .then((data) => data.json())
+                .then((json) => {
+                    console.log(json);
+                    L.geoJSON(json).addTo(markerGroup).bindPopup("Kommt bald...");
+                })
+        ];
+        /*
         if (store.appointmentsUrl) {
             return [
                 fetch(store.appointmentsUrl)
@@ -68,6 +91,7 @@
                     })
             ]
         }
+        */
         return [];
     }
 </script>
