@@ -1,6 +1,6 @@
 <template>
-    <v-card>
-        <v-tabs-window v-model="tab" class="mx-3 mt-2 mb-1">
+    <v-card class="px-3 pt-2">
+        <v-tabs-window v-model="tab">
             <v-tabs-window-item :value="t.id" v-for="t in tabs">
                 <v-form v-model="valids[t.id]">
                     <component :is="t.component" :ref="(ref: TabComponent) => refs[t.id] = ref" />
