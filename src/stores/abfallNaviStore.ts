@@ -91,27 +91,9 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
             return ctx;
         }
     }).get().json();
-    const trashTypesRegion: UseFetchReturn<any[]> = useFetch(computed(() => trashTypesRegionUrl.value ?? ''), {
-        initialData: [],
-        refetch: true,
-        beforeFetch() {
-            trashTypesRegion.data.value = [];
-        },
-    }).get().json();
-    const trashTypesStreet: UseFetchReturn<any[]> = useFetch(computed(() => trashTypesStreetUrl.value ?? ''), {
-        initialData: [],
-        refetch: true,
-        beforeFetch() {
-            trashTypesStreet.data.value = [];
-        },
-    }).get().json();;
-    const trashTypesHouseNumber: UseFetchReturn<any[]> = useFetch(computed(() => trashTypesHouseNumberUrl.value ?? ''), {
-        initialData: [],
-        refetch: true,
-        beforeFetch() {
-            trashTypesHouseNumber.data.value = [];
-        },
-    }).get().json();
+    const trashTypesRegion: UseFetchReturn<any[]> = useFetchHelper(computed(() => trashTypesRegionUrl.value ?? ''), undefined, undefined);
+    const trashTypesStreet: UseFetchReturn<any[]> = useFetchHelper(computed(() => trashTypesStreetUrl.value ?? ''), undefined, undefined);
+    const trashTypesHouseNumber: UseFetchReturn<any[]> = useFetchHelper(computed(() => trashTypesHouseNumberUrl.value ?? ''), undefined, undefined);
     const trashTypes: Reactive<{ isFetching: Ref<boolean>, data: Ref<TrashType[]>, level: Ref<TrashTypeLevel | undefined> }> = reactive({
         isFetching: computed<boolean>(() => trashTypesRegion.isFetching.value || trashTypesStreet.isFetching.value || trashTypesHouseNumber.isFetching.value),
         data: computed<TrashType[]>(() => {
@@ -143,16 +125,20 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
 });
 
 // Utilities
-function useFetchHelper<ID, Item>(url: Ref<string>, item: Ref<ID | undefined>, idField: keyof Item | string) {
+function useFetchHelper<ID, Item>(url: Ref<string>, item?: Ref<ID | undefined>, idField?: keyof Item | string) {
     const items: UseFetchReturn<Item[]> & PromiseLike<UseFetchReturn<Item[]>> = useFetch(url, {
         initialData: [],
         refetch: true,
         beforeFetch() {
             items.data.value = [];
-            item.value = undefined;
+            if (item) {
+                item.value = undefined;
+            }
         },
         afterFetch(ctx) {
-            item.value = ctx.data[0][idField];
+            if (item && idField) {
+                item.value = ctx.data[0][idField];
+            }
             return ctx;
         }
     }).get().json();
