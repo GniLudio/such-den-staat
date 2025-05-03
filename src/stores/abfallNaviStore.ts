@@ -1,6 +1,6 @@
-import { useFetch, type UseFetchReturn } from "@vueuse/core";
+import { useFetch, type AfterFetchContext, type BeforeFetchContext, type UseFetchReturn } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { computed, type Ref, ref, type ComputedRef, reactive, type Reactive, watch } from "vue";
+import { computed, type Ref, ref, type ComputedRef } from "vue";
 
 export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     // Fields
@@ -72,39 +72,34 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     ]);
     const places: UseFetchReturn<Place[]> = useFetchHelper(computed(() => placesUrl.value ?? ''), place, 'id');
     const streets: UseFetchReturn<Street[]> = useFetchHelper(computed(() => streetsUrl.value ?? ''), street, 'id');
-    const houseNumbers: UseFetchReturn<HouseNumber[]> = useFetchHelper(computed(() => streetNumbersUrl.value ?? ''), houseNumber, "id", (data) => {
-        const newData: HouseNumber[] = 'hausNrList' in data ? data.hausNrList : [];
+    const houseNumbers: UseFetchReturn<HouseNumber[]> = useFetchHelper(computed(() => streetNumbersUrl.value ?? ''), houseNumber, "id", undefined, (context) => {
+        const data: HouseNumber[] = 'hausNrList' in context.data ? context.data.hausNrList : [];
         for (const houseNumber of (houseNumbers.data.value ?? [])) {
-            if (!newData.find((other) => houseNumber.id == other.id)) {
-                newData.push(houseNumber);
+            if (!data.find((other) => houseNumber.id == other.id)) {
+                data.push(houseNumber);
             }
         }
-        return newData;
+        context.data = data;
     })
-    const trashTypesRegion: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesRegionUrl.value ?? ''), undefined, undefined);
-    const trashTypesStreet: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesStreetUrl.value ?? ''), undefined, undefined);
-    const trashTypesHouseNumber: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesHouseNumberUrl.value ?? ''), undefined, undefined);
-    const trashTypes: Reactive<{ isFetching: Ref<boolean>, data: Ref<TrashType[]>, level: Ref<TrashTypeLevel | undefined> }> = reactive({
+    const trashTypesRegion: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesRegionUrl.value ?? ''));
+    const trashTypesStreet: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesStreetUrl.value ?? ''));
+    const trashTypesHouseNumber: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesHouseNumberUrl.value ?? ''));
+    const trashTypes: { isFetching: Ref<boolean>, data: Ref<TrashType[]>, level: Ref<TrashTypeLevel | undefined> } = {
         isFetching: computed<boolean>(() => {
-            switch (trashTypes.level) {
-                case "Region":
-                    return trashTypesRegion.isFetching.value;
-                case "Street":
-                    return trashTypesStreet.isFetching.value;
-                case "HouseNumber":
-                    return trashTypesHouseNumber.isFetching.value;
-                default:
-                    return false;
+            switch (trashTypes.level.value) {
+                case "Region": return trashTypesRegion.isFetching.value;
+                case "Street": return trashTypesStreet.isFetching.value;
+                case "HouseNumber": return trashTypesHouseNumber.isFetching.value;
+                default: return false;
             }
         }),
         data: computed<TrashType[]>(() => {
             let data: TrashType[] = [];
-            switch (trashTypes.level) {
+            switch (trashTypes.level.value) {
                 case "HouseNumber": data = trashTypesHouseNumber.data.value ?? []; break;
                 case "Street": data = trashTypesStreet.data.value ?? []; break;
                 case "Region": data = trashTypesRegion.data.value ?? []; break;
             }
-            selectedTrashTypes.value = data.map((t) => t.id);
             return data;
         }),
         level: computed<TrashTypeLevel | undefined>(() => {
@@ -113,7 +108,7 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
             else if (region.value) return "Region";
             else return undefined;
         })
-    });
+    };
 
     return {
         regions, region,
@@ -125,20 +120,24 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     };
 });
 
+
 // Utilities
-function useFetchHelper<ID, Item>(url: Ref<string>, item?: Ref<ID | undefined>, idField?: keyof Item, adjustData?: (data: any) => any) {
+function useFetchHelper<ID, Item>(url: Ref<string>, item?: Ref<ID | undefined>, idField?: keyof Item, onBeforeFetch?: (context: BeforeFetchContext) => void, onAfterFetch?: (context: AfterFetchContext) => void) {
     const items: UseFetchReturn<Item[]> & PromiseLike<UseFetchReturn<Item[]>> = useFetch(url, {
         initialData: [],
         refetch: true,
-        beforeFetch() {
+        beforeFetch(context) {
+            if (onBeforeFetch) {
+                onBeforeFetch(context);
+            }
             items.data.value = [];
             if (item) {
                 item.value = undefined;
             }
         },
         afterFetch(ctx) {
-            if (adjustData) {
-                ctx.data = adjustData(ctx.data);
+            if (onAfterFetch) {
+                onAfterFetch(ctx);
             }
             if (item && idField) {
                 item.value = ctx.data[0][idField];
@@ -147,7 +146,6 @@ function useFetchHelper<ID, Item>(url: Ref<string>, item?: Ref<ID | undefined>, 
         }
     }).get().json();
     return items;
-
 }
 
 // Types
