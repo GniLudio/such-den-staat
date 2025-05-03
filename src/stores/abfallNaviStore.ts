@@ -72,25 +72,15 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     ]);
     const places: UseFetchReturn<Place[]> = useFetchHelper(computed(() => placesUrl.value ?? ''), place, 'id');
     const streets: UseFetchReturn<Street[]> = useFetchHelper(computed(() => streetsUrl.value ?? ''), street, 'id');
-    const houseNumbers: UseFetchReturn<HouseNumber[]> = useFetch(computed(() => streetNumbersUrl.value ?? ''), {
-        initialData: [],
-        refetch: true,
-        beforeFetch: () => {
-            houseNumbers.data.value = [];
-            houseNumber.value = undefined;
-        },
-        afterFetch: (ctx) => {
-            const data: HouseNumber[] = 'hausNrList' in ctx.data ? ctx.data.hausNrList : [];
-            for (const houseNumber of (houseNumbers.data.value ?? [])) {
-                if (!data.find((other) => houseNumber.id == other.id)) {
-                    data.push(houseNumber);
-                }
+    const houseNumbers: UseFetchReturn<HouseNumber[]> = useFetchHelper(computed(() => streetNumbersUrl.value ?? ''), houseNumber, "id", (data) => {
+        const newData: HouseNumber[] = 'hausNrList' in data ? data.hausNrList : [];
+        for (const houseNumber of (houseNumbers.data.value ?? [])) {
+            if (!newData.find((other) => houseNumber.id == other.id)) {
+                newData.push(houseNumber);
             }
-            ctx.data = data;
-            houseNumber.value = ctx.data[0].id;
-            return ctx;
         }
-    }).get().json();
+        return newData;
+    })
     const trashTypesRegion: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesRegionUrl.value ?? ''), undefined, undefined);
     const trashTypesStreet: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesStreetUrl.value ?? ''), undefined, undefined);
     const trashTypesHouseNumber: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesHouseNumberUrl.value ?? ''), undefined, undefined);
@@ -136,7 +126,7 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
 });
 
 // Utilities
-function useFetchHelper<ID, Item>(url: Ref<string>, item?: Ref<ID | undefined>, idField?: keyof Item | string) {
+function useFetchHelper<ID, Item>(url: Ref<string>, item?: Ref<ID | undefined>, idField?: keyof Item, adjustData?: (data: any) => any) {
     const items: UseFetchReturn<Item[]> & PromiseLike<UseFetchReturn<Item[]>> = useFetch(url, {
         initialData: [],
         refetch: true,
@@ -147,6 +137,9 @@ function useFetchHelper<ID, Item>(url: Ref<string>, item?: Ref<ID | undefined>, 
             }
         },
         afterFetch(ctx) {
+            if (adjustData) {
+                ctx.data = adjustData(ctx.data);
+            }
             if (item && idField) {
                 item.value = ctx.data[0][idField];
             }
