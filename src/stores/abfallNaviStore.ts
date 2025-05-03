@@ -1,6 +1,6 @@
 import { useFetch, type AfterFetchContext, type BeforeFetchContext, type UseFetchReturn } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { computed, type Ref, ref, type ComputedRef } from "vue";
+import { computed, type Ref, ref, type ComputedRef, watch } from "vue";
 
 export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     // Fields
@@ -109,6 +109,20 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
             else return undefined;
         })
     };
+    let selectedTrashTypeNames: string[] = [];
+    watch(selectedTrashTypes, () => {
+        selectedTrashTypeNames = selectedTrashTypes.value
+            .map((t) => trashTypes.data.value.find((t2) => t2.id == t)?.name ?? undefined)
+            .filter((t) => t != undefined);
+    });
+    watch(trashTypes.data, (newValue) => {
+        if (newValue.length > 0) {
+            selectedTrashTypes.value = selectedTrashTypeNames
+                .map((t) => newValue.find((t2) => t == t2.name)?.id)
+                .filter((t) => t != undefined);
+
+        }
+    })
 
     return {
         regions, region,
