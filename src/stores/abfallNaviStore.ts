@@ -91,9 +91,9 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
             return ctx;
         }
     }).get().json();
-    const trashTypesRegion: UseFetchReturn<any[]> = useFetchHelper(computed(() => trashTypesRegionUrl.value ?? ''), undefined, undefined);
-    const trashTypesStreet: UseFetchReturn<any[]> = useFetchHelper(computed(() => trashTypesStreetUrl.value ?? ''), undefined, undefined);
-    const trashTypesHouseNumber: UseFetchReturn<any[]> = useFetchHelper(computed(() => trashTypesHouseNumberUrl.value ?? ''), undefined, undefined);
+    const trashTypesRegion: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesRegionUrl.value ?? ''), undefined, undefined);
+    const trashTypesStreet: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesStreetUrl.value ?? ''), undefined, undefined);
+    const trashTypesHouseNumber: UseFetchReturn<TrashType[]> = useFetchHelper(computed(() => trashTypesHouseNumberUrl.value ?? ''), undefined, undefined);
     const trashTypes: Reactive<{ isFetching: Ref<boolean>, data: Ref<TrashType[]>, level: Ref<TrashTypeLevel | undefined> }> = reactive({
         isFetching: computed<boolean>(() => trashTypesRegion.isFetching.value || trashTypesStreet.isFetching.value || trashTypesHouseNumber.isFetching.value),
         data: computed<TrashType[]>(() => {
