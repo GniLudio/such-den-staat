@@ -97,7 +97,7 @@ export const useAbfallNaviStore = defineStore("abfallNavi", () => {
     const trashTypes: Reactive<{ isFetching: Ref<boolean>, data: Ref<TrashType[]>, level: Ref<TrashTypeLevel | undefined> }> = reactive({
         isFetching: computed<boolean>(() => trashTypesRegion.isFetching.value || trashTypesStreet.isFetching.value || trashTypesHouseNumber.isFetching.value),
         data: computed<TrashType[]>(() => {
-            let data = [];
+            let data: TrashType[] = [];
             switch (trashTypes.level) {
                 case "HouseNumber": data = trashTypesHouseNumber.data.value ?? []; break;
                 case "Street": data = trashTypesStreet.data.value ?? []; break;
