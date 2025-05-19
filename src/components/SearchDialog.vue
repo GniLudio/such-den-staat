@@ -21,15 +21,15 @@
     import { useLeafletStore } from '@/stores/leafletStore';
     import { type Ref, ref, type ComputedRef, computed, watch, type Component } from 'vue';
     import AbfallNaviTab from './searchTabs/AbfallNaviTab.vue';
-    //import AutobahnTab from './searchTabs/AutobahnTab.vue';
+    import AutobahnTab from './searchTabs/AutobahnTab.vue';
 
 
     const tabs: Tab[] = [
-        //{
-        //    id: "autobahnenTab",
-        //    label: "Autobahnen",
-        //    component: AutobahnTab,
-        //},
+        {
+            id: "autobahnenTab",
+            label: "Autobahnen",
+            component: AutobahnTab,
+        },
         {
             id: "abfallNaviTab",
             label: "AbfallNavi",
